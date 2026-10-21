@@ -1,0 +1,46 @@
+# Strategy A (topic-driven) query groups. Each group becomes ONE query per
+# provider (OR-joined phrases), each with its own durable watermark.
+# Seed terms, not a mandatory conjunction: any phrase in a group matches.
+# Provider syntax is generated in code (PubMed [tiab]/[mh], Europe PMC TITLE_ABS,
+# OpenAlex title_and_abstract.search). Changing a group's terms changes its
+# query hash and starts a fresh watermark for that group.
+query_version: "1.0"
+# Default providers per group. OpenAlex largely duplicates PubMed/Europe PMC for biomedical
+# literature (measured: 60% of records in a 14-day test), so it is used only where it adds
+# non-biomedical coverage: modelling methods and AI. Override per group with `providers:`.
+providers: [pubmed, europe_pmc]
+
+groups:
+  - id: mathematical_modelling
+    providers: [pubmed, europe_pmc, openalex]
+    terms: [microsimulation, agent-based model, individual-based model, dynamic transmission model,
+      compartmental model, Markov model, discrete-event simulation, mathematical modelling,
+      mathematical modeling, computational epidemiology, simulation-based optimization]
+    mesh: ["Computer Simulation", "Markov Chains"]
+    # PubMed MeSH alone is too broad; combine with a public-health anchor.
+    mesh_anchor: ["Public Health", "Epidemiologic Methods", "Communicable Diseases", "Neoplasms"]
+
+  - id: biostatistics_inference
+    terms: [Bayesian calibration, parameter estimation, uncertainty quantification, causal inference,
+      survival modelling, survival modeling, statistical learning, model validation,
+      probabilistic sensitivity analysis, target trial emulation]
+    # These terms are generic: require a population-health context term.
+    context: [public health, epidemiolog*, population, screening, policy, disease*, health]
+
+  - id: health_economics_policy
+    terms: [cost-effectiveness analysis, cost-utility analysis, health economic evaluation,
+      resource allocation, policy optimization, screening optimization, adaptive intervention,
+      health technology assessment, distributional cost-effectiveness, budget impact analysis]
+    mesh: ["Cost-Benefit Analysis"]
+    mesh_anchor: ["Models, Economic", "Models, Theoretical", "Computer Simulation", "Decision Support Techniques"]
+
+  - id: ai_exploratory
+    providers: [pubmed, europe_pmc, openalex]
+    terms: [reinforcement learning, Markov decision process, generative AI, large language model,
+      retrieval-augmented generation, agentic workflow, knowledge graph, AI-assisted simulation,
+      machine learning for decision-making]
+    context: [health, epidemiolog*, disease*, clinical, policy, simulation*, public health]
+
+  - id: application_domains
+    terms: [hepatitis C elimination, lung cancer screening, prostate cancer screening, liver cancer screening,
+      tobacco control model, smoking simulation model, incarceration hepatitis, prison transmission]

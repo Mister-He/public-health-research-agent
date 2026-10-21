@@ -1,0 +1,71 @@
+# Scoring dimensions. Enabled weights must sum to 1.0 (validated at load).
+# method: llm (Claude returns the 0-100 score), deterministic (Python computes),
+#         hybrid (Claude assigns evidence, e.g. tags; Python computes the score).
+# missing_data_policy: reject (paper not ranked) | zero | exclude_and_renormalize
+# Changing a rubric_version invalidates cached evaluations for that dimension.
+scoring:
+  scale: {minimum: 0, maximum: 100}
+  dimensions:
+    - id: research_alignment
+      name: Research alignment
+      description: Fit with the core or exploratory research profile (methods, application, policy relevance).
+      enabled: true
+      weight: 0.30
+      method: llm
+      rubric_version: "1.0"
+      prompt: prompts/alignment.md
+      missing_data_policy: reject
+
+    - id: methodological_innovation
+      name: Methodological innovation
+      description: Novelty of the method (new method / new combination / new application / incremental).
+      enabled: true
+      weight: 0.25
+      method: llm
+      rubric_version: "1.0"
+      prompt: prompts/innovation.md
+      missing_data_policy: reject
+
+    - id: trend_relevance
+      name: Emerging trend relevance
+      description: Membership in trend tags weighted by the latest validated trend snapshot.
+      enabled: true
+      weight: 0.15
+      method: hybrid
+      evaluator: trend_relevance
+      rubric_version: "1.0"
+      missing_data_policy: zero
+
+    - id: freshness
+      name: Freshness
+      description: Smooth exponential decay on the verified first-publication date.
+      enabled: true
+      weight: 0.15
+      method: deterministic
+      evaluator: freshness
+      rubric_version: "1.0"
+      params: {half_life_days: 14}
+      missing_data_policy: zero
+
+    - id: methodological_rigor
+      name: Evidence and methodological rigor
+      description: Validation, assumptions, uncertainty, calibration, transparency — not journal prestige.
+      enabled: true
+      weight: 0.10
+      method: llm
+      rubric_version: "1.0"
+      prompt: prompts/methodology_review.md
+      missing_data_policy: reject
+
+    - id: cross_disciplinary_transferability
+      name: Cross-disciplinary transferability
+      description: Usefulness of methods from outside public health for the research profile.
+      enabled: true
+      weight: 0.05
+      method: llm
+      rubric_version: "1.0"
+      prompt: prompts/transferability.md
+      missing_data_policy: reject
+
+  # Tolerance used by the validator when recomputing composite scores.
+  tolerance: 1.0e-6

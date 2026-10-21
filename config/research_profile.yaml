@@ -1,0 +1,156 @@
+# Research profile: the single source of truth for what "relevant" means.
+# Edit freely. `importance` is relative (0-1); `kind` is core | exploratory.
+# Keywords are matched as phrases (case-insensitive, hyphen/space tolerant);
+# they also seed provider queries (see search_queries.yaml).
+profile_version: "1.0"
+owner: "Yichen He"
+
+topics:
+  - id: epi_modelling
+    name: Biostatistics and epidemiological modelling
+    kind: core
+    importance: 1.0
+    description: >
+      Statistical and mathematical models of disease occurrence, natural history and
+      population dynamics used to inform public health decisions.
+    keywords: [epidemiological model, epidemiological modelling, epidemiological modeling,
+      biostatistics, computational epidemiology, mathematical modelling, mathematical modeling,
+      statistical model, natural history model, population health model]
+    mesh_terms: ["Models, Statistical", "Models, Theoretical", "Epidemiologic Methods"]
+
+  - id: simulation_models
+    name: Microsimulation, agent-based and dynamic transmission models
+    kind: core
+    importance: 1.0
+    description: >
+      Individual-level microsimulation, agent-based/individual-based models, compartmental
+      and dynamic transmission models, discrete-event and Markov models.
+    keywords: [microsimulation, agent-based model, agent-based modelling, agent-based modeling,
+      individual-based model, dynamic transmission model, transmission model, compartmental model,
+      SIR model, SEIR model, Markov model, discrete-event simulation, simulation model,
+      simulation-based optimization, digital twin]
+    mesh_terms: ["Computer Simulation", "Systems Analysis", "Markov Chains"]
+
+  - id: calibration_uq
+    name: Model calibration, validation and uncertainty quantification
+    kind: core
+    importance: 0.9
+    description: >
+      Bayesian and likelihood-based calibration, emulators, parameter estimation, model
+      validation, probabilistic sensitivity analysis and uncertainty quantification.
+    keywords: [Bayesian calibration, model calibration, calibration, parameter estimation,
+      uncertainty quantification, probabilistic sensitivity analysis, sensitivity analysis,
+      model validation, external validation, emulator, approximate Bayesian computation,
+      value of information]
+    mesh_terms: ["Uncertainty", "Bayes Theorem", "Calibration"]
+
+  - id: causal_inference
+    name: Causal inference and statistical learning for health
+    kind: core
+    importance: 0.75
+    description: >
+      Causal inference, target trial emulation, survival modelling and statistical learning
+      for population health questions.
+    keywords: [causal inference, target trial emulation, survival model, survival modelling,
+      survival analysis, statistical learning, counterfactual, g-computation,
+      instrumental variable, mendelian randomization]
+    mesh_terms: ["Causality", "Survival Analysis"]
+
+  - id: health_economics
+    name: Health economic evaluation and HTA
+    kind: core
+    importance: 1.0
+    description: >
+      Cost-effectiveness, cost-utility, budget impact, distributional cost-effectiveness
+      analysis and health technology assessment.
+    keywords: [cost-effectiveness, cost effectiveness analysis, cost-utility, economic evaluation,
+      health economic evaluation, health technology assessment, QALY, quality-adjusted life year,
+      DALY, incremental cost-effectiveness ratio, ICER, budget impact,
+      distributional cost-effectiveness, net monetary benefit]
+    mesh_terms: ["Cost-Benefit Analysis", "Technology Assessment, Biomedical", "Quality-Adjusted Life Years"]
+
+  - id: policy_optimization
+    name: Public health policy optimization and resource allocation
+    kind: core
+    importance: 0.95
+    description: >
+      Intervention prioritization, resource allocation, screening optimization, adaptive and
+      risk-stratified intervention strategies and evidence-based decision-making.
+    keywords: [policy optimization, policy optimisation, resource allocation, intervention prioritization,
+      screening optimization, screening strategy, risk-stratified screening, risk-stratified,
+      adaptive intervention, decision analysis, decision-analytic model, decision making under uncertainty,
+      optimal policy, evidence-based decision-making]
+    mesh_terms: ["Health Policy", "Resource Allocation", "Decision Support Techniques"]
+
+  # --- Application domains (core, slightly lower weight: methods matter most) ---
+  - id: cancer_control
+    name: Cancer screening, prevention and control
+    kind: core
+    importance: 0.8
+    description: Lung, liver and prostate cancer screening, prevention and control.
+    keywords: [cancer screening, lung cancer screening, low-dose computed tomography, LDCT,
+      liver cancer, hepatocellular carcinoma, prostate cancer screening, PSA screening,
+      cancer prevention, cancer control]
+    mesh_terms: ["Early Detection of Cancer", "Mass Screening"]
+    application_domain: true
+
+  - id: tobacco_control
+    name: Smoking and tobacco control
+    kind: core
+    importance: 0.75
+    description: Smoking cessation, tobacco control policy and its modelling.
+    keywords: [tobacco control, smoking cessation, smoking prevalence, tobacco policy, e-cigarette, vaping]
+    mesh_terms: ["Tobacco Use Cessation", "Smoking Prevention"]
+    application_domain: true
+
+  - id: hcv_infectious
+    name: Hepatitis C and infectious disease elimination
+    kind: core
+    importance: 0.8
+    description: >
+      Hepatitis C and other infectious diseases, elimination modelling, transmission in
+      high-risk populations including people who inject drugs and incarcerated populations.
+    keywords: [hepatitis C, HCV, viral hepatitis, HCV elimination, elimination, people who inject drugs,
+      incarceration, prison, incarcerated, HIV transmission, tuberculosis transmission,
+      infectious disease modelling, infectious disease modeling]
+    mesh_terms: ["Hepatitis C", "Prisons", "Communicable Diseases"]
+    application_domain: true
+
+  # --- Exploratory ---
+  - id: ai_ml_health
+    name: AI and machine learning for health modelling
+    kind: exploratory
+    importance: 0.6
+    description: Machine learning used to build, accelerate or replace health/decision models.
+    keywords: [machine learning, deep learning, AI-assisted simulation, surrogate model,
+      neural network emulator, machine learning for decision-making]
+    exclude: [image segmentation, radiomics]
+
+  - id: llm_rag_kg
+    name: Generative AI, LLMs, RAG and knowledge graphs
+    kind: exploratory
+    importance: 0.55
+    description: >
+      Large language models, retrieval-augmented generation, knowledge graphs and scientific
+      knowledge retrieval, particularly for evidence synthesis and modelling workflows.
+    keywords: [large language model, LLM, generative AI, retrieval-augmented generation, RAG,
+      knowledge graph, evidence synthesis automation, systematic review automation, scientific knowledge retrieval]
+
+  - id: rl_sequential
+    name: Reinforcement learning and sequential decision-making
+    kind: exploratory
+    importance: 0.6
+    description: Reinforcement learning, Markov decision processes and dynamic treatment regimes.
+    keywords: [reinforcement learning, Markov decision process, MDP, POMDP, sequential decision,
+      dynamic treatment regime, contextual bandit, multi-armed bandit, optimal control]
+
+  - id: ai_agents
+    name: AI agents and autonomous research workflows
+    kind: exploratory
+    importance: 0.45
+    description: Agentic workflows, autonomous research assistants, AI-assisted mathematical modelling.
+    keywords: [AI agent, agentic workflow, autonomous agent, multi-agent system, AI scientist,
+      AI-assisted modelling, AI-assisted modeling, AI-driven policy optimization]
+
+# Terms that disqualify a record from screening regardless of other matches.
+global_exclusions: [erratum, corrigendum, retraction notice, "correction to"]

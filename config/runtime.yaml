@@ -1,0 +1,24 @@
+runtime:
+  timezone: Asia/Shanghai
+  database_path: state/research.sqlite3
+  analysis_dir: analysis
+  log_dir: logs
+  windows:
+    daily_lookback_days: 7          # overlap applied to every watermark (dedup safety net)
+    reconciliation_days: 30         # metadata re-fetch window for recently seen records
+    initial_baseline_days: 180      # first-run landscape window
+    recommendation_horizon_days: 30
+    backfill_max_days: 365
+    brief_retention_days: 45        # irrelevant brief-info papers are deleted after this; others drop source records
+  # Each run processes at most this many window chunks per (provider, query);
+  # the remainder is caught up on following runs from the durable watermark.
+  max_chunks_per_query_per_run: 6
+  data_branch:
+    name: research-data
+    snapshot_dir: state              # partitioned NDJSON snapshot on the data branch
+    push_retries: 3
+  git:
+    remote: origin
+    report_branch: main
+    author_name: research-agent[bot]
+    author_email: research-agent@users.noreply.github.com

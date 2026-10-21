@@ -1,0 +1,11 @@
+reporting:
+  timezone: Asia/Shanghai
+  output_dir: reports
+  narrative_words: {min: 150, max: 250}
+  # Abstract reproduction policy:
+  #   full      - reproduce the verified abstract verbatim with its source
+  #   link_only - never reproduce; show the official link only
+  # Records whose license is in `link_only_licenses` are always link_only.
+  abstract_policy: full
+  link_only_licenses: []
+  include_coverage_footer: true

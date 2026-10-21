@@ -1,0 +1,53 @@
+# Journals for Strategy B (journal-driven discovery). ISSNs are the identity;
+# names are only a sanity check (mismatches are logged, not used to filter).
+# ISSNs were verified on 2026-10-21 against Crossref /journals and OpenAlex /sources.
+journals:
+  # --- High priority (mandatory) ---
+  - id: lancet_public_health
+    name: The Lancet Public Health
+    issns: ["2468-2667"]
+    priority: high
+    enabled: true
+  - id: lancet_rh_wpac
+    name: The Lancet Regional Health - Western Pacific
+    issns: ["2666-6065"]
+    priority: high
+    enabled: true
+  - id: plos_medicine
+    name: PLOS Medicine
+    issns: ["1549-1277", "1549-1676"]
+    priority: high
+    enabled: true
+  - id: bmc_medicine
+    name: BMC Medicine
+    issns: ["1741-7015"]
+    priority: high
+    enabled: true
+  - id: jama_network_open
+    name: JAMA Network Open
+    issns: ["2574-3805"]
+    priority: high
+    enabled: true
+
+  # --- Optional (enabled by default; disable any you don't want) ---
+  - {id: lancet, name: The Lancet, issns: ["0140-6736", "1474-547X"], priority: normal, enabled: true}
+  - {id: lancet_digital_health, name: The Lancet Digital Health, issns: ["2589-7500"], priority: normal, enabled: true}
+  - {id: lancet_global_health, name: The Lancet Global Health, issns: ["2214-109X"], priority: normal, enabled: true}
+  - {id: nature_medicine, name: Nature Medicine, issns: ["1078-8956", "1546-170X"], priority: normal, enabled: true}
+  - {id: nature_methods, name: Nature Methods, issns: ["1548-7091", "1548-7105"], priority: normal, enabled: true}
+  - {id: bmj, name: BMJ, issns: ["0959-8138", "1756-1833"], priority: normal, enabled: true}
+  - {id: health_affairs, name: Health Affairs, issns: ["0278-2715", "1544-5208"], priority: normal, enabled: true}
+  - {id: eclinicalmedicine, name: EClinicalMedicine, issns: ["2589-5370"], priority: normal, enabled: true}
+  # Health economics / decision science
+  - {id: medical_decision_making, name: Medical Decision Making, issns: ["0272-989X", "1552-681X"], priority: normal, enabled: true}
+  - {id: value_in_health, name: Value in Health, issns: ["1098-3015", "1524-4733"], priority: normal, enabled: true}
+  - {id: pharmacoeconomics, name: PharmacoEconomics, issns: ["1170-7690", "1179-2027"], priority: normal, enabled: true}
+  - {id: health_economics, name: Health Economics, issns: ["1057-9230", "1099-1050"], priority: normal, enabled: true}
+  # Epidemiology / biostatistics / mathematical biology / informatics
+  - {id: am_j_epidemiol, name: American Journal of Epidemiology, issns: ["0002-9262", "1476-6256"], priority: normal, enabled: true}
+  - {id: epidemiology, name: Epidemiology, issns: ["1044-3983", "1531-5487"], priority: normal, enabled: true}
+  - {id: stat_med, name: Statistics in Medicine, issns: ["0277-6715", "1097-0258"], priority: normal, enabled: true}
+  - {id: epidemics, name: Epidemics, issns: ["1755-4365"], priority: normal, enabled: true}
+  - {id: plos_comp_bio, name: PLOS Computational Biology, issns: ["1553-734X", "1553-7358"], priority: normal, enabled: true}
+  - {id: jamia, name: Journal of the American Medical Informatics Association, issns: ["1067-5027", "1527-974X"], priority: normal, enabled: true}
+  - {id: npj_digital_medicine, name: npj Digital Medicine, issns: ["2398-6352"], priority: normal, enabled: true}

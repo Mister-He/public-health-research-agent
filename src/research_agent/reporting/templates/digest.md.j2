@@ -1,0 +1,65 @@
+---
+{{ front_matter }}
+---
+
+# Public Health Research Digest — {{ date }}
+
+## Daily overview
+
+{{ narrative }}
+
+*{{ narrative_note }}*
+
+## Recommendations
+{% if papers|length < max_recommendations %}
+> **Coverage note:** {{ papers|length }} paper{{ '' if papers|length == 1 else 's' }} met the eligibility and verification rules today (maximum {{ max_recommendations }}). The list is not padded with stale or weakly related papers.
+{% endif %}
+{% for p in papers %}
+### {{ p.position }}. {{ p.title }}
+
+| Field | Value |
+|---|---|
+| Canonical ID | `{{ p.canonical_id }}` |
+| Rank | {{ p.position }} (raw-score rank {{ p.raw_rank }}) |
+| Authors | {{ p.authors_cell }} |
+| Journal / server | {{ p.venue_cell }} |
+| Publication date | {{ p.date_cell }} |
+| DOI | {{ p.doi_cell }} |
+| PMID | {{ p.pmid_cell }} |
+| URL | {{ p.url_cell }} |
+| Peer review / preprint status | {{ p.status_cell }} |
+| Overall score | **{{ p.overall }}** / 100 |
+
+**Abstract**{{ p.abstract_label }}
+
+{{ p.abstract_block }}
+
+**Author keywords:** {{ p.keywords_cell }}
+
+**MeSH terms:** {{ p.mesh_cell }}
+
+**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: {{ p.ai_tags_cell }}
+
+**Matched emerging trend tags:** {{ p.trend_tags_cell }}
+
+**Score breakdown** (weighted sum computed in Python; scoring version `{{ scoring_version }}`)
+
+| Dimension | Weight | Score | Method | Confidence |
+|---|---:|---:|---|---:|
+{% for d in p.dims -%}
+| {{ d.name }} | {{ d.weight }} | {{ d.score }} | {{ d.method }} | {{ d.confidence }} |
+{% endfor -%}
+| **Overall** | **1.00** | **{{ p.overall }}** | weighted sum | |
+
+**Methodological assessment** *(AI interpretation{{ p.novelty_qualifier }})*: {{ p.methodology }}
+
+**Why it is recommended for you** *(AI interpretation)*: {{ p.why }}
+
+**Evidence and confidence limitations:** {{ p.limitations }}
+
+{% endfor %}
+{% if footer %}
+## Methodology and coverage
+
+{{ footer }}
+{% endif %}

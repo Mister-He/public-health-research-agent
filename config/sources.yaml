@@ -1,0 +1,69 @@
+# Literature providers. Every provider keeps its own per-query watermark.
+# min_interval_seconds is a client-side rate limit (requests are serialized per provider).
+sources:
+  pubmed:
+    enabled: true
+    base_url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+    # edat = Entrez date (when the record entered PubMed): the right axis for incremental pulls.
+    date_type: edat
+    min_interval_seconds: 0.34      # 3 req/s without key; lowered automatically to 0.11 with NCBI_API_KEY
+    page_size: 500                  # esearch page
+    fetch_batch_size: 200           # efetch batch
+    chunk_days: 14
+    max_records_per_query_window: 5000
+  europe_pmc:
+    enabled: true
+    base_url: https://www.ebi.ac.uk/europepmc/webservices/rest
+    # FIRST_IDATE = first index date in Europe PMC; includes preprints (SRC:PPR).
+    min_interval_seconds: 0.2
+    page_size: 500
+    chunk_days: 14
+    max_records_per_query_window: 5000
+  openalex:
+    enabled: true
+    base_url: https://api.openalex.org
+    # from_created_date needs a paid plan, so windows use publication dates plus overlap.
+    min_interval_seconds: 0.2
+    page_size: 200
+    chunk_days: 30
+    max_records_per_query_window: 3000
+  crossref:
+    enabled: true
+    base_url: https://api.crossref.org
+    # Journal-driven only (Crossref free-text search is not Boolean-capable).
+    # created = DOI first registered; indexed changes on every re-index and is not used.
+    min_interval_seconds: 0.25
+    page_size: 500
+    chunk_days: 30
+    max_records_per_query_window: 3000
+  medrxiv:
+    enabled: true
+    base_url: https://api.medrxiv.org
+    # No server-side search: the window is fetched in full and screened locally.
+    min_interval_seconds: 1.0
+    chunk_days: 7
+    max_records_per_query_window: 20000
+  arxiv:
+    enabled: false                  # optional; enable for computational methods (stat.ME, cs.LG, q-bio.PE)
+    base_url: https://export.arxiv.org/api/query
+    min_interval_seconds: 3.0
+    page_size: 200
+    chunk_days: 7
+    categories: [stat.ME, stat.AP, q-bio.PE, cs.AI, cs.LG]
+    max_records_per_query_window: 2000
+  semantic_scholar:
+    enabled: false                  # optional enrichment only
+    base_url: https://api.semanticscholar.org/graph/v1
+    min_interval_seconds: 1.1
+
+http:
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  max_retries: 5
+  backoff_base_seconds: 1.5
+  backoff_max_seconds: 60
+  user_agent: "research-agent/{version} (public health literature monitor; mailto:{email})"
+
+# Minimum coverage: a daily digest is only published if at least this many
+# mandatory providers completed their window for the day.
+minimum_successful_providers: 3

@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Runtime state (authoritative copy lives on the data branch)
+state/
+.data-branch/
+analysis/
+logs/
+reports/.staging/
+replay/
+
+.DS_Store

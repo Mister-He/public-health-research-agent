@@ -1,0 +1,37 @@
+# Claude runs ONLY through anthropics/claude-code-action in GitHub Actions,
+# authenticated with the subscription OAuth token (secret CLAUDE_CODE_OAUTH_TOKEN).
+# The Python worker never calls the Anthropic API. There is no API-key fallback.
+llm:
+  provider: claude_code_action
+  auth: oauth_subscription
+  allow_api_key_fallback: false   # must stay false; validated at load
+  model: sonnet                   # Claude Code model alias or full model id
+  prompt_version: "1.0"
+  stages:
+    scoring:
+      max_turns: 30
+      timeout_minutes: 40
+      batch_size: 8               # papers per batch file (one output file per batch)
+      max_papers_per_run: 40      # daily Claude workload cap (usage-aware)
+    narrative:
+      max_turns: 6
+      timeout_minutes: 10
+    trend_discovery:
+      max_turns: 8
+      timeout_minutes: 15
+  screening:
+    shortlist_min: 30
+    shortlist_max: 60
+    exploratory_share_max: 0.3    # of the shortlist
+  queue:
+    lease_minutes: 240            # in_progress jobs older than this are recovered
+    max_format_attempts: 3        # malformed output -> permanent_failed after this many
+    backoff_base_hours: 6         # retry_after = base * 2^(attempt-1), capped
+    backoff_max_hours: 72
+    quota_retry_hours: 20         # auth/quota outages: retry next scheduled run
+  local:
+    # Optional Ollama provider for LOCAL experimentation only (never in CI).
+    ollama_enabled: false
+    ollama_url: http://127.0.0.1:11434
+    ollama_model: llama3.1:8b
+    ollama_embedding_model: nomic-embed-text

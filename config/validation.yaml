@@ -1,0 +1,12 @@
+validation:
+  # Check identity against authoritative providers (Crossref / PubMed / medRxiv) at publish time.
+  online_identity_checks: true
+  # Fetch landing pages (respecting robots.txt). Blocked/bot-protected pages fall back
+  # to authoritative metadata and yield a warning, not a failure.
+  url_checks: true
+  url_timeout_seconds: 20
+  max_repair_rounds: 3
+  # Title similarity (normalized) required when comparing against authoritative metadata
+  # IF no stronger identifier match exists. With a matching DOI/PMID, exact normalized equality
+  # after markup stripping is still required, with this ratio as a tolerance for markup differences.
+  title_match_ratio: 0.93

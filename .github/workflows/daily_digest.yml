@@ -1,0 +1,302 @@
+name: Daily research digest
+
+# 06:00 Asia/Shanghai every day (GitHub supports IANA time zones on schedules).
+# If your GitHub plan/runner ignores `timezone`, the equivalent UTC schedule is "0 22 * * *"
+# (22:00 UTC = 06:00 next day in China Standard Time). Report dates are ALWAYS computed in
+# Asia/Shanghai by the pipeline, so a delayed start still produces the intended date.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+    inputs:
+      report_date:
+        description: "Report date YYYY-MM-DD (Asia/Shanghai). Empty = today."
+        required: false
+        default: ""
+      mode:
+        description: "daily | backfill | validation-only"
+        type: choice
+        options: [daily, backfill, validation-only]
+        default: daily
+      backfill_start:
+        description: "Backfill start YYYY-MM-DD (mode=backfill)"
+        required: false
+        default: ""
+      backfill_end:
+        description: "Backfill end YYYY-MM-DD (mode=backfill)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Generate and validate, but do not publish or commit"
+        type: boolean
+        default: false
+      max_eval:
+        description: "Maximum papers sent to Claude this run (empty = config)"
+        required: false
+        default: ""
+      force_metadata_refresh:
+        description: "Re-fetch the 30-day reconciliation window for every query"
+        type: boolean
+        default: false
+      skip_llm:
+        description: "Skip Claude (rank with cached evaluations only)"
+        type: boolean
+        default: false
+
+# One writer at a time for the data branch and reports; never cancel a running writer.
+concurrency:
+  group: research-agent-state
+  cancel-in-progress: false
+
+permissions: {}
+
+env:
+  PYTHON_VERSION: "3.12"
+  RESEARCH_AGENT_CONTACT_EMAIL: ${{ vars.RESEARCH_AGENT_CONTACT_EMAIL }}
+  RESEARCH_AGENT_RUN_ID: gh-${{ github.run_id }}
+
+jobs:
+  # ---------------------------------------------------------------------------- 1. ingest
+  ingest:
+    if: ${{ github.event_name == 'schedule' || inputs.mode != 'validation-only' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    permissions:
+      contents: write          # push the data branch (state) — no other scopes
+    env:
+      # `secrets` cannot be used in step conditions; expose only a boolean.
+      HAS_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+    outputs:
+      report_date: ${{ steps.inputs.outputs.report_date }}
+      has_work: ${{ steps.ingest.outputs.has_work }}
+      mode: ${{ steps.inputs.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Validate inputs
+        id: inputs
+        env:
+          IN_DATE: ${{ inputs.report_date }}
+          IN_MODE: ${{ inputs.mode }}
+          IN_MAX: ${{ inputs.max_eval }}
+          IN_START: ${{ inputs.backfill_start }}
+          IN_END: ${{ inputs.backfill_end }}
+        run: |
+          set -euo pipefail
+          re='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          if [ -n "${IN_DATE}" ]; then [[ "${IN_DATE}" =~ $re ]] || { echo "::error::invalid report_date"; exit 2; }; d="${IN_DATE}";
+          else d=$(TZ=Asia/Shanghai date +%F); fi
+          if [ -n "${IN_MAX}" ]; then [[ "${IN_MAX}" =~ ^[0-9]{1,3}$ ]] || { echo "::error::invalid max_eval"; exit 2; }; fi
+          mode="${IN_MODE:-daily}"
+          if [ "$mode" = backfill ]; then
+            [[ "${IN_START}" =~ $re && "${IN_END}" =~ $re ]] || { echo "::error::backfill needs start/end dates"; exit 2; }
+          fi
+          echo "report_date=$d" >> "$GITHUB_OUTPUT"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "scheduled_for=$d actual_start=$(date -u +%FT%TZ)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Refuse pay-as-you-go credentials
+        if: ${{ env.HAS_ANTHROPIC_API_KEY == 'true' }}
+        run: |
+          echo "::error::Secret ANTHROPIC_API_KEY exists. This pipeline only uses the Claude Code subscription OAuth token. Remove the secret."
+          exit 2
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: uv sync --locked --no-dev
+      - name: Git identity
+        run: |
+          git config user.name "research-agent[bot]"
+          git config user.email "research-agent@users.noreply.github.com"
+      - name: Ingest (checkpointed) and persist state BEFORE Claude
+        id: ingest
+        env:
+          NCBI_API_KEY: ${{ secrets.NCBI_API_KEY }}
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+        run: >-
+          uv run research-agent ci ingest
+          --date "${{ steps.inputs.outputs.report_date }}"
+          --time-budget 2700
+          --snapshot analysis/state/research.sqlite3.gz
+          ${{ inputs.skip_llm && '--skip-llm' || '' }}
+          ${{ inputs.force_metadata_refresh && '--reconcile' || '' }}
+          ${{ inputs.max_eval != '' && format('--max-eval {0}', inputs.max_eval) || '' }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: scoring-input
+          path: |
+            analysis/scoring/
+            analysis/state/research.sqlite3.gz
+          retention-days: 5
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: logs-ingest
+          path: logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------- 2. analyze (Claude)
+  analyze:
+    needs: ingest
+    if: ${{ needs.ingest.result == 'success' && !inputs.skip_llm && needs.ingest.outputs.mode != 'backfill' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read           # read-only token; no write access, no Git credentials persisted
+    env:
+      REPORT_DATE: ${{ needs.ingest.outputs.report_date }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: uv sync --locked --no-dev
+      - uses: actions/download-artifact@v8
+        with:
+          name: scoring-input
+          path: analysis/
+      - name: Claude arguments (model, turn limit, minimal tools)
+        id: args
+        run: uv run research-agent ci claude-args --stage scoring
+
+      - name: Claude — structured paper assessment
+        id: score
+        if: ${{ needs.ingest.outputs.has_work == 'true' }}
+        continue-on-error: true
+        timeout-minutes: 45
+        # Pinned: anthropics/claude-code-action v1.0.245. Review release notes before bumping.
+        uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: ${{ steps.args.outputs.prompt }}
+          claude_args: ${{ steps.args.outputs.args }}
+          display_report: "false"
+      - name: Classify scoring outcome
+        if: ${{ always() && needs.ingest.outputs.has_work == 'true' }}
+        run: >-
+          uv run research-agent ci classify --stage scoring
+          --outcome "${{ steps.score.outcome }}"
+          --execution-file "${{ steps.score.outputs.execution_file }}"
+
+      - name: Prepare narrative / weekly trend manifests (throwaway DB copy)
+        id: prepare
+        if: ${{ always() }}
+        run: uv run research-agent ci prepare --date "$REPORT_DATE" --snapshot analysis/state/research.sqlite3.gz
+
+      - name: Claude arguments (narrative)
+        id: nargs
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        run: uv run research-agent ci claude-args --stage narrative
+      - name: Claude — daily narrative
+        id: narrative
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: ${{ steps.nargs.outputs.prompt }}
+          claude_args: ${{ steps.nargs.outputs.args }}
+          display_report: "false"
+      - name: Classify narrative outcome
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        run: >-
+          uv run research-agent ci classify --stage narrative
+          --outcome "${{ steps.narrative.outcome }}"
+          --execution-file "${{ steps.narrative.outputs.execution_file }}"
+
+      - name: Claude arguments (trend discovery)
+        id: targs
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        run: uv run research-agent ci claude-args --stage trend_discovery
+      - name: Claude — weekly tag proposals
+        id: trends
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        continue-on-error: true
+        timeout-minutes: 20
+        uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: ${{ steps.targs.outputs.prompt }}
+          claude_args: ${{ steps.targs.outputs.args }}
+          display_report: "false"
+      - name: Classify trend-discovery outcome
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        run: >-
+          uv run research-agent ci classify --stage trend_discovery
+          --outcome "${{ steps.trends.outcome }}"
+          --execution-file "${{ steps.trends.outputs.execution_file }}"
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: analysis-output
+          path: |
+            analysis/output/
+            analysis/narrative/manifest.json
+            analysis/trends/manifest.json
+          retention-days: 5
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------- 3. publish
+  publish:
+    needs: [ingest, analyze]
+    # Runs after Claude failures too: state is persisted, but a report only if it validates.
+    if: ${{ always() && (needs.ingest.result == 'success' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'validation-only')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write          # commit the verified report to main + persist state
+    env:
+      REPORT_DATE: ${{ needs.ingest.outputs.report_date || inputs.report_date }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: uv sync --locked --no-dev
+      - name: Git identity
+        run: |
+          git config user.name "research-agent[bot]"
+          git config user.email "research-agent@users.noreply.github.com"
+      - uses: actions/download-artifact@v8
+        if: ${{ needs.analyze.result != 'skipped' }}
+        continue-on-error: true
+        with:
+          name: analysis-output
+          path: analysis/
+      - name: Validation-only
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'validation-only' }}
+        run: uv run research-agent ci validate --date "${{ inputs.report_date || env.REPORT_DATE }}"
+      - name: Backfill
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'backfill' }}
+        run: >-
+          uv run research-agent ci backfill --start "${{ inputs.backfill_start }}" --end "${{ inputs.backfill_end }}"
+          ${{ inputs.dry_run && '--dry-run' || '' }}
+      - name: Import, rank, render, validate, publish
+        id: publish
+        if: ${{ github.event_name == 'schedule' || inputs.mode == 'daily' }}
+        run: >-
+          uv run research-agent ci publish --date "$REPORT_DATE"
+          --analysis-result "${{ needs.analyze.result }}"
+          ${{ inputs.dry_run && '--dry-run' || '' }}
+      - uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: logs-publish
+          path: |
+            logs/
+            reports/.staging/
+          retention-days: 14
+          if-no-files-found: ignore

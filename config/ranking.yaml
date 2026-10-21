@@ -1,0 +1,22 @@
+ranking:
+  max_recommendations: 10
+  # Minimum verified papers required to publish a (shorter) digest at all.
+  min_verified_papers: 3
+  # Publication horizon: papers whose verified first-publication date is older are ineligible.
+  publication_horizon_days: 30
+  # Hard eligibility: research_alignment score must reach this (0-100).
+  core_relevance_threshold: 55
+  exploratory_relevance_threshold: 60
+  max_exploratory: 2
+  # Minimum metadata completeness (0-1) to be eligible.
+  min_metadata_completeness: 0.5
+  # Diversity: final = raw - lambda * max_tag_jaccard_with_already_selected * 100.
+  # Used ONLY to order selection; raw score and position are both stored and shown.
+  diversity:
+    enabled: true
+    lambda: 0.10
+  resurfacing:
+    allow_previously_recommended: false
+    allow_on_preprint_published: true      # journal version of a recommended preprint may appear
+    allow_on_new_preprint_version: true    # a new preprint version with changed abstract
+  # Tie-breaking is deterministic: score desc, publication date desc, canonical_id asc.

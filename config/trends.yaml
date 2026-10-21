@@ -1,0 +1,116 @@
+# Trend taxonomy and trend-estimation parameters.
+# Tags here are USER-AUTHORITATIVE: status/pinned/manual_override are never changed
+# automatically. Claude proposals are stored separately (DB table tag_proposals) until
+# accepted with `research-agent tags accept <proposal_id>`.
+# Seed tags are provisional: they are NOT empirically validated trends.
+taxonomy_version: 1
+parameters:
+  recent_window_days: 30
+  baseline_window_days: 180
+  frequency_windows: [7, 30, 90]
+  weights: {frequency: 0.50, growth: 0.30, external: 0.20}
+  smoothing:
+    pseudo_count: 1.0          # additive (Laplace) smoothing for rates
+    ema_alpha: 0.3             # new_score = alpha*today + (1-alpha)*previous snapshot
+    growth_logistic_scale: 0.7 # growth = logistic(log_rate_ratio / scale)
+    frequency_scale: 0.05      # frequency = 1 - exp(-share / scale); a 5% share of the corpus -> 0.63
+  min_sample: 5                # fewer tagged papers (recent+baseline) => growth marked unavailable
+  corpus_min_prescreen: 0.15   # topic-filtered corpus = papers with prescreen score >= this
+  reassessment_weekday: monday # full re-evaluation + Claude tag proposals (Asia/Shanghai)
+  external:
+    enabled: true              # OpenAlex field-wide counts; unavailable => weight renormalized
+    window_days: 90
+  proposals:
+    max_new_per_week: 3
+    min_cluster_size: 8
+    min_unmatched_share: 0.10
+
+tags:
+  - id: ai_health_econ
+    name: AI-assisted health economic modelling
+    description: Machine learning or LLMs used to build, calibrate, or run health economic models.
+    aliases: []
+    parent_tags: []
+    match: [[machine learning, cost-effectiveness], [large language model, economic evaluation],
+      [artificial intelligence, health economic], [LLM, cost-effectiveness], [machine learning, health technology assessment]]
+    status: active
+    pinned: false
+    seed: true
+  - id: abm_public_health
+    name: Agent-based public health simulation
+    description: Agent-based or individual-based simulation of population health.
+    aliases: [individual-based simulation]
+    match: [[agent-based], [individual-based model]]
+    status: active
+    pinned: true
+    seed: true
+  - id: bayes_calibration_uq
+    name: Bayesian calibration and uncertainty quantification
+    description: Bayesian calibration, emulation and UQ for simulation and epidemiological models.
+    match: [[Bayesian calibration], [model calibration], [uncertainty quantification], [approximate Bayesian computation], [emulator, calibration]]
+    status: active
+    pinned: true
+    seed: true
+  - id: rl_adaptive_interventions
+    name: Reinforcement learning for adaptive interventions
+    description: RL / MDP methods for adaptive or sequential health interventions.
+    match: [[reinforcement learning], [Markov decision process], [dynamic treatment regime]]
+    status: active
+    pinned: false
+    seed: true
+  - id: digital_twins_population
+    name: Digital twins in population health
+    description: Digital twin approaches applied to populations or health systems.
+    match: [[digital twin]]
+    status: active
+    pinned: false
+    seed: true
+  - id: causal_simulation
+    name: Causal inference and simulation integration
+    description: Combining causal inference (e.g. target trial emulation, g-methods) with simulation models.
+    match: [[causal inference, simulation], [target trial emulation], [g-formula], [g-computation, simulation]]
+    status: active
+    pinned: false
+    seed: true
+  - id: llm_evidence_synthesis
+    name: LLM-assisted evidence synthesis
+    description: LLMs for systematic reviews, meta-analysis, data extraction and evidence retrieval.
+    match: [[large language model, systematic review], [LLM, evidence synthesis], [retrieval-augmented generation], [large language model, meta-analysis]]
+    status: active
+    pinned: false
+    seed: true
+  - id: genai_health_policy
+    name: Generative AI for health policy
+    description: Generative AI applied to health policy analysis, design or communication.
+    match: [[generative AI, policy], [large language model, health policy]]
+    status: active
+    pinned: false
+    seed: true
+  - id: cancer_screening_optimization
+    name: Cancer screening optimization
+    description: Optimizing cancer screening eligibility, intervals and risk-stratified strategies.
+    match: [[cancer screening, optimal], [cancer screening, risk-stratified], [screening strategy, cancer], [cancer screening, microsimulation], [cancer screening, cost-effectiveness]]
+    status: active
+    pinned: true
+    seed: true
+  - id: infectious_elimination_modelling
+    name: Infectious disease elimination modelling
+    description: Modelling elimination targets (e.g. HCV, HIV, TB) and the interventions needed.
+    match: [[elimination, transmission model], [elimination, hepatitis C], [elimination, modelling], [elimination, modeling]]
+    status: active
+    pinned: true
+    seed: true
+  - id: distributional_cea
+    name: Distributional cost-effectiveness analysis
+    description: Equity-informative economic evaluation (DCEA) and distributional impacts.
+    match: [[distributional cost-effectiveness], [equity, cost-effectiveness], [extended cost-effectiveness]]
+    status: active
+    pinned: false
+    seed: true
+  - id: decision_under_uncertainty
+    name: Decision-making under uncertainty
+    description: Value of information, robust decision-making and decision analysis under deep uncertainty.
+    match: [[value of information], [decision making under uncertainty], [robust decision], [probabilistic sensitivity analysis]]
+    status: active
+    pinned: false
+    seed: true

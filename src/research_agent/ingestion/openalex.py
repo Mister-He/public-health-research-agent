@@ -11,7 +11,7 @@ from collections.abc import Iterator
 from datetime import date
 
 from research_agent.ingestion.base import BaseProvider, Page, as_list, map_all
-from research_agent.ingestion.http import SchemaError
+from research_agent.ingestion.http import SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import (normalize_doi, normalize_openalex, normalize_pmcid,
                                                    normalize_pmid, strip_markup)
 from research_agent.metadata.schemas import SourceRecord
@@ -67,7 +67,7 @@ class OpenAlexProvider(BaseProvider):
             data = self.works(filt, cur)
             total = int(data["meta"].get("count") or 0)
             if total > self.cfg.max_records_per_query_window:
-                raise SchemaError(self.name, f"window {start}..{end} has {total} works; reduce chunk_days")
+                raise WindowTooLarge(self.name, total, self.cfg.max_records_per_query_window)
             results = data["results"]
             recs, warns = map_all(map_openalex, results, spec.query_id, spec.strategy)
             nxt = data["meta"].get("next_cursor")

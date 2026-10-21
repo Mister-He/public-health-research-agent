@@ -8,7 +8,7 @@ from collections.abc import Iterator
 from datetime import date
 
 from research_agent.ingestion.base import BaseProvider, Page
-from research_agent.ingestion.http import SchemaError
+from research_agent.ingestion.http import SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import normalize_doi, normalize_pmcid, normalize_pmid, strip_markup
 from research_agent.metadata.schemas import SourceRecord
 from research_agent.retrieval.query_builder import QuerySpec
@@ -52,13 +52,14 @@ class PubMedProvider(BaseProvider):
                 if isinstance(data, dict) and "esearchresult" in data and "ERROR" in data["esearchresult"]:
                     raise SchemaError(self.name, str(data["esearchresult"]["ERROR"])) from exc
                 raise SchemaError(self.name, f"esearch: {exc}") from exc
+            if count > limit:
+                raise WindowTooLarge(self.name, count, limit)
             ids.extend(batch)
             retstart += len(batch)
             if not batch or retstart >= count or retstart >= limit:
                 break
         if count > limit:
-            raise SchemaError(self.name, f"window {start}..{end} has {count} records (> limit {limit}); "
-                                         "reduce chunk_days")
+            raise WindowTooLarge(self.name, count, limit)
         return sorted(set(ids), key=int)
 
     def fetch_pmids(self, pmids: list[str], spec_id: str = "enrichment", strategy: str = "enrichment") -> list[SourceRecord]:

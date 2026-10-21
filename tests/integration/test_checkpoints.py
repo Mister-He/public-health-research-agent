@@ -145,3 +145,29 @@ def test_time_budget_stops_cleanly(db, settings, deadline_hit):
     s = run_ingestion(db, settings, {"pubmed": prov}, run_id="r", end_date=END, initial_days=180, specs=[SPEC],
                       deadline=0.0, clock=lambda: 1.0)
     assert s.outcomes[0].status == "partial" and not s.outcomes[0].caught_up and wm(db) is None
+
+
+class TooBigProvider(FakeProvider):
+    """Refuses windows longer than `max_days`, like an API whose result count exceeds the limit."""
+
+    def __init__(self, by_day, max_days):
+        super().__init__(by_day)
+        self.max_days = max_days
+
+    def fetch_window(self, spec, start, end, cursor):
+        from research_agent.ingestion.http import WindowTooLarge
+        if (end - start).days + 1 > self.max_days:
+            self.calls.append((start, end, "too-big"))
+            raise WindowTooLarge("pubmed", 9999, 5000)
+        yield from super().fetch_window(spec, start, end, cursor)
+
+
+def test_oversized_window_is_split_not_failed(db, settings):
+    days = {END - timedelta(days=i): [rec(i, END - timedelta(days=i))] for i in range(0, 30)}
+    prov = TooBigProvider(days, max_days=4)
+    s = run_ingestion(db, settings, {"pubmed": prov}, run_id="r", end_date=END, initial_days=14, specs=[SPEC])
+    assert s.outcomes[0].status == "ok" and wm(db) == END.isoformat()
+    assert db.scalar("SELECT COUNT(*) FROM papers") == 14                  # every day of the window fetched
+    fetched = sorted((a, b) for a, b, c in prov.calls if c != "too-big")
+    assert all((b - a).days + 1 <= 4 for a, b in fetched)
+    assert fetched[0][0] == END - timedelta(days=13) and fetched[-1][1] == END   # contiguous coverage

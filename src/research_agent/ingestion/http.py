@@ -37,6 +37,14 @@ class SchemaError(ProviderError):
         super().__init__(provider, f"unexpected response schema: {message}", retryable=False)
 
 
+class WindowTooLarge(ProviderError):
+    """A date window holds more records than the per-window safety limit; the caller splits it."""
+
+    def __init__(self, provider: str, count: int, limit: int):
+        super().__init__(provider, f"window has {count} records (> limit {limit})", retryable=True)
+        self.count = count
+
+
 def redact_url(url: str) -> str:
     u = httpx.URL(url)
     params = [(k, "***" if k.lower() in _SECRET_PARAMS else v) for k, v in u.params.multi_items()]

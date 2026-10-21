@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 from research_agent.ingestion.base import Provider
-from research_agent.ingestion.http import HttpClient, ProviderError
+from research_agent.ingestion.http import HttpClient, ProviderError, WindowTooLarge
 from research_agent.metadata.deduplication import ingest_record
 from research_agent.retrieval.query_builder import QuerySpec, build_queries
 from research_agent.settings import Settings
@@ -138,7 +138,9 @@ def run_ingestion(db: Database, settings: Settings, providers: dict[str, Provide
         all_windows = plan_windows(wm, end_date, overlap_days=overlap, initial_days=initial_days,
                                    chunk_days=chunk_days, max_chunks=10_000)
         out.caught_up = len(windows) == len(all_windows)
-        for start, end in windows:
+        queue = list(windows)
+        while queue:
+            start, end = queue.pop(0)
             if deadline is not None and clock() > deadline:
                 out.status, out.caught_up = "partial", False
                 break
@@ -147,6 +149,13 @@ def run_ingestion(db: Database, settings: Settings, providers: dict[str, Provide
                     and cp["query_hash"] == spec.query_hash:
                 cursor = cp["cursor"]
             ok = _fetch_chunk(db, prov, spec, start, end, cursor, run_id, out, summary, wm)
+            if ok == "split":
+                # Too many records for one window: fetch the two halves in order instead.
+                mid = start + (end - start) // 2
+                queue[:0] = [(start, mid), (mid + timedelta(days=1), end)]
+                log.info("window split", extra={"provider": spec.provider, "query": spec.query_id,
+                                                "window": f"{start}..{end}"})
+                continue
             if not ok:
                 break
             wm = max(wm, end) if wm else end
@@ -158,7 +167,7 @@ def run_ingestion(db: Database, settings: Settings, providers: dict[str, Provide
 
 
 def _fetch_chunk(db: Database, prov: Provider, spec: QuerySpec, start: date, end: date, cursor: str | None,
-                 run_id: str, out: QueryOutcome, summary: IngestSummary, wm: date | None) -> bool:
+                 run_id: str, out: QueryOutcome, summary: IngestSummary, wm: date | None) -> bool | str:
     started = iso_utc()
     pages = records = new = 0
     try:
@@ -179,6 +188,15 @@ def _fetch_chunk(db: Database, prov: Provider, spec: QuerySpec, start: date, end
                                  pages_done=pages, run_id=run_id, error=None, success=final)
                 for w in page.warnings:
                     log.warning(w, extra={"provider": spec.provider, "query": spec.query_id})
+    except WindowTooLarge:
+        if pages == 0 and end > start:
+            return "split"
+        exc = ProviderError(spec.provider, f"single-day window {start} exceeds max_records_per_query_window")
+        _save_checkpoint(db, spec, wm, status="failed", window=(start, end), cursor=None, pages_done=pages,
+                         run_id=run_id, error=str(exc), success=False)
+        _log_run(db, run_id, spec, start, end, "failed", records, new, pages, started, str(exc))
+        out.status, out.error = "failed", str(exc)
+        return False
     except Exception as exc:  # isolate any provider/query failure; the watermark is not advanced
         if not isinstance(exc, ProviderError):
             exc = ProviderError(spec.provider, f"{type(exc).__name__}: {exc}", retryable=True)

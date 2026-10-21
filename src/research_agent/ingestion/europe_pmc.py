@@ -7,7 +7,7 @@ from collections.abc import Iterator
 from datetime import date
 
 from research_agent.ingestion.base import BaseProvider, Page, as_list, map_all
-from research_agent.ingestion.http import SchemaError
+from research_agent.ingestion.http import SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import normalize_doi, normalize_pmcid, normalize_pmid, strip_markup
 from research_agent.metadata.schemas import SourceRecord
 from research_agent.retrieval.query_builder import QuerySpec
@@ -32,7 +32,7 @@ class EuropePMCProvider(BaseProvider):
         while True:
             data = self.search(q, cur)
             if int(data["hitCount"]) > self.cfg.max_records_per_query_window:
-                raise SchemaError(self.name, f"window {start}..{end} has {data['hitCount']} hits; reduce chunk_days")
+                raise WindowTooLarge(self.name, int(data["hitCount"]), self.cfg.max_records_per_query_window)
             results = as_list(data["resultList"].get("result"))
             recs, warns = map_all(map_epmc, results, spec.query_id, spec.strategy)
             seen += len(results)

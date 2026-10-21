@@ -11,7 +11,7 @@ from datetime import date
 from urllib.parse import quote
 
 from research_agent.ingestion.base import BaseProvider, Page, as_list, map_all
-from research_agent.ingestion.http import ProviderError, SchemaError
+from research_agent.ingestion.http import ProviderError, SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import normalize_doi, normalize_title, strip_markup
 from research_agent.metadata.schemas import SourceRecord
 from research_agent.retrieval.query_builder import QuerySpec
@@ -46,7 +46,7 @@ class CrossrefProvider(BaseProvider):
             except (KeyError, TypeError, ValueError) as exc:
                 raise SchemaError(self.name, f"works: {exc}") from exc
             if total > self.cfg.max_records_per_query_window:
-                raise SchemaError(self.name, f"window {start}..{end} has {total} items; reduce chunk_days")
+                raise WindowTooLarge(self.name, total, self.cfg.max_records_per_query_window)
             recs, warnings = map_all(map_crossref, items, spec.query_id, spec.strategy)
             for r in recs:
                 if expected_name and r.journal and normalize_title(r.journal) != expected_name:

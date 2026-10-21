@@ -10,7 +10,7 @@ from collections.abc import Iterator
 from datetime import date
 
 from research_agent.ingestion.base import BaseProvider, Page, map_all
-from research_agent.ingestion.http import SchemaError
+from research_agent.ingestion.http import SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import normalize_doi, strip_markup
 from research_agent.metadata.schemas import SourceRecord
 from research_agent.retrieval.query_builder import QuerySpec
@@ -44,7 +44,7 @@ class MedRxivProvider(BaseProvider):
             coll = data.get("collection") or []
             total = int(msg.get("total") or 0)
             if total > self.cfg.max_records_per_query_window:
-                raise SchemaError(self.name, f"window has {total} records; reduce chunk_days")
+                raise WindowTooLarge(self.name, total, self.cfg.max_records_per_query_window)
             # First-version dates of revisions are looked up later, only for relevant papers
             # (pipeline.runner.fill_preprint_first_dates).
             recs, warns = map_all(map_medrxiv, coll, spec.query_id, spec.strategy, self.server)

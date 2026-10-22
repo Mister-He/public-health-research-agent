@@ -147,6 +147,8 @@ def paper_view(it: ReportItem, settings: Settings, snapshot_tags: dict[str, dict
         "pmid_cell": f"[{p.pmid}](https://pubmed.ncbi.nlm.nih.gov/{p.pmid}/)" if p.pmid else UNAVAILABLE,
         "url_cell": f"<{p.canonical_url}>" if p.canonical_url else UNAVAILABLE,
         "status_cell": status,
+        "impact_cell": cell((it.dims.get("journal_impact", {}).get("details") or {}).get("description")
+                            or "Not scored (journal impact dimension disabled)"),
         "overall": f"{it.overall:.2f}",
         "abstract_label": label, "abstract_block": abstract_block,
         "keywords_cell": cell("; ".join(p.author_keywords)) if p.author_keywords else "No author keywords in verified sources",

@@ -117,8 +117,21 @@ class Journal(StrictModel):
         return v
 
 
+class BlockedJournal(StrictModel):
+    name: str
+    issns: list[str] = Field(min_length=1)
+    reason: str = ""
+
+
 class JournalsFile(StrictModel):
     journals: list[Journal]
+    blocked: list[BlockedJournal] = []
+
+    def listed_issns(self) -> set[str]:
+        return {i for j in self.journals if j.enabled for i in j.issns}
+
+    def blocked_issns(self) -> set[str]:
+        return {i for b in self.blocked for i in b.issns}
 
 
 class QueryGroup(StrictModel):
@@ -267,6 +280,7 @@ class RankingConfig(StrictModel):
     min_metadata_completeness: float = 0.5
     diversity: dict[str, Any] = {"enabled": True, "lambda": 0.1}
     resurfacing: dict[str, bool] = {}
+    journal_floor: dict[str, Any] = {"enabled": True, "min_two_year_mean_citedness": 2.0}
 
 
 class LLMStage(StrictModel):

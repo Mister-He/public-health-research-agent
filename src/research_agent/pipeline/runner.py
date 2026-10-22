@@ -25,7 +25,8 @@ from research_agent.pipeline.checkpoints import make_http, make_providers, run_i
 from research_agent.pipeline.state import RunRecord, latest_stage_summary
 from research_agent.ranking.selector import run_selection
 from research_agent.reporting.renderer import load_items, narrative_manifest, render, set_validation_status
-from research_agent.retrieval.screening import prescreen, shortlist_and_enqueue
+from research_agent.retrieval.screening import candidate_issns, prescreen, shortlist_and_enqueue
+from research_agent.scoring.journal import fetch_metrics, missing_issns
 from research_agent.settings import Settings
 from research_agent.storage import analysis_queue as q
 from research_agent.storage.compaction import apply_retention, candidates_for_compaction, compact_papers
@@ -87,6 +88,11 @@ def ingest_stage(db: Database, settings: Settings, report_date: date, *, run_id:
             refresh_external(db, settings, report_date, providers["openalex"])
             db.set_meta("external_refreshed_for", report_date.isoformat())
     v1_dates = fill_preprint_first_dates(db, settings, report_date, providers.get("medrxiv"))
+    journals_looked_up = 0
+    if "openalex" in providers:
+        with db.transaction():
+            journals_looked_up = fetch_metrics(db, providers["openalex"],
+                                               missing_issns(db, candidate_issns(db, settings, report_date)))
     screen = shortlist_and_enqueue(db, settings, report_date)
     manifest = None
     if not skip_llm:
@@ -105,7 +111,8 @@ def ingest_stage(db: Database, settings: Settings, report_date: date, *, run_id:
         "successful_providers": sorted(summ.successful_providers), "failed_providers": sorted(summ.failed_providers),
         "caught_up": caught_up, "landscape": landscape or ("completed" if landscape_done else "in_progress"),
         "prescreen_shortlist_pool": screen.above_threshold, "enqueued": screen.enqueued,
-        "compacted_to_brief_info": compacted, "retention": retention, "preprint_first_dates_looked_up": v1_dates,
+        "compacted_to_brief_info": compacted, "retention": retention,
+        "journal_metrics_looked_up": journals_looked_up, "excluded_by_journal_floor": screen.excluded_by_journal, "preprint_first_dates_looked_up": v1_dates,
         "manifest_papers": manifest["paper_count"] if manifest else 0,
         "pending_analysis_count": queue["by_status"].get("pending", 0) + queue["by_status"].get("in_progress", 0),
         "retryable_analysis_count": queue["by_status"].get("retryable_failed", 0),

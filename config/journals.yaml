@@ -1,6 +1,12 @@
 # Journals for Strategy B (journal-driven discovery). ISSNs are the identity;
 # names are only a sanity check (mismatches are logged, not used to filter).
 # ISSNs were verified on 2026-10-21 against Crossref /journals and OpenAlex /sources.
+#
+# Journals listed here are also TRUSTED for journal-impact scoring: they always pass the
+# minimum-impact floor and score at least `listed_journal_min_score` (config/scoring.yaml),
+# because field citation norms differ (methods/health-economics journals cite less than
+# general medicine). Add any journal you trust here; `enabled: false` removes it from both
+# discovery and the trusted list.
 journals:
   # --- High priority (mandatory) ---
   - id: lancet_public_health
@@ -51,3 +57,10 @@ journals:
   - {id: plos_comp_bio, name: PLOS Computational Biology, issns: ["1553-734X", "1553-7358"], priority: normal, enabled: true}
   - {id: jamia, name: Journal of the American Medical Informatics Association, issns: ["1067-5027", "1527-974X"], priority: normal, enabled: true}
   - {id: npj_digital_medicine, name: npj Digital Medicine, issns: ["2398-6352"], priority: normal, enabled: true}
+
+# Journals that are NEVER recommended, whatever their metrics (e.g. journals you consider
+# low-quality or predatory). Matched by ISSN.
+blocked: []
+#  - name: Example Journal
+#    issns: ["0000-0000"]
+#    reason: "why it is blocked"

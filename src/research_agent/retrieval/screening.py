@@ -11,6 +11,7 @@ from datetime import date, timedelta
 from research_agent.retrieval.embeddings import Embedder, TfidfEmbedder
 from research_agent.retrieval.keyword_filter import lexical_screen
 from research_agent.settings import Settings
+from research_agent.scoring.journal import floor_reason, journal_context
 from research_agent.storage import analysis_queue as q
 from research_agent.storage.database import Database
 from research_agent.storage.repositories import load_paper, save_paper
@@ -31,6 +32,7 @@ class ScreenStats:
     above_threshold: int = 0
     enqueued: int = 0
     already_evaluated_or_queued: int = 0
+    excluded_by_journal: int = 0
 
 
 def prescreen(db: Database, settings: Settings, paper_ids: list[int], embedder: Embedder | None = None) -> int:
@@ -72,6 +74,17 @@ def prescreen(db: Database, settings: Settings, paper_ids: list[int], embedder: 
     return len(papers)
 
 
+def candidate_issns(db: Database, settings: Settings, report_date: date) -> set[str]:
+    """ISSNs of journal articles that could be shortlisted (for journal-metric lookup)."""
+    horizon = report_date - timedelta(days=settings.ranking.publication_horizon_days)
+    out: set[str] = set()
+    for r in db.query("SELECT json_extract(data, '$.journal_issn') AS i FROM papers WHERE compacted=0 AND is_preprint=0"
+                      " AND prescreen_score >= ? AND first_publication_date BETWEEN ? AND ?",
+                      (MIN_PRESCREEN, horizon.isoformat(), report_date.isoformat())):
+        out.update(json.loads(r["i"] or "[]"))
+    return out
+
+
 def shortlist_and_enqueue(db: Database, settings: Settings, report_date: date) -> ScreenStats:
     """Shortlist recent, sufficiently relevant papers and enqueue Claude jobs (deduplicated)."""
     st = ScreenStats()
@@ -93,6 +106,10 @@ def shortlist_and_enqueue(db: Database, settings: Settings, report_date: date) -
     for r in rows:
         if picked >= cap:
             break
+        # Journal floor / block list BEFORE Claude: low-impact journals never use analysis allowance.
+        if floor_reason(journal_context(db, settings, load_paper(db, r["id"])), settings):
+            st.excluded_by_journal += 1
+            continue
         topics = json.loads(r["data"]).get("prescreen_topics") or []
         kind = settings.profile.topic(topics[0]).kind if topics else "core"
         if kind == "exploratory" and expl >= expl_cap:

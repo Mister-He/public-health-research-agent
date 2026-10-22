@@ -11,7 +11,7 @@ from collections.abc import Iterator
 from datetime import date
 
 from research_agent.ingestion.base import BaseProvider, Page, as_list, map_all
-from research_agent.ingestion.http import SchemaError, WindowTooLarge
+from research_agent.ingestion.http import ProviderError, SchemaError, WindowTooLarge
 from research_agent.metadata.normalization import (normalize_doi, normalize_openalex, normalize_pmcid,
                                                    normalize_pmid, strip_markup)
 from research_agent.metadata.schemas import SourceRecord
@@ -59,6 +59,23 @@ class OpenAlexProvider(BaseProvider):
         except (KeyError, TypeError, ValueError) as exc:
             raise SchemaError(self.name, "missing meta.count") from exc
 
+    def source_by_issn(self, issn: str) -> dict | None:
+        """Journal-level metrics for one ISSN (None when OpenAlex has no such source)."""
+        try:
+            data = self.http.get_json(self.name, f"{self.cfg.base_url}/sources/issn:{issn}", params=self._params(
+                select="id,display_name,summary_stats,is_in_doaj,type"),
+                retry_statuses={429, 500, 502, 503, 504})
+        except ProviderError as exc:
+            if exc.status == 404:
+                return None
+            raise
+        if not isinstance(data, dict) or "id" not in data:
+            raise SchemaError(self.name, f"sources/issn:{issn}: missing id")
+        stats = data.get("summary_stats") or {}
+        return {"openalex_source_id": normalize_source(data["id"]), "display_name": data.get("display_name"),
+                "two_year_mean_citedness": stats.get("2yr_mean_citedness"), "h_index": stats.get("h_index"),
+                "is_in_doaj": data.get("is_in_doaj"), "source_type": data.get("type")}
+
     def fetch_window(self, spec: QuerySpec, start: date, end: date, cursor: str | None) -> Iterator[Page]:
         filt = (f"title_and_abstract.search:{spec.text},"
                 f"from_publication_date:{start.isoformat()},to_publication_date:{end.isoformat()}")
@@ -77,6 +94,10 @@ class OpenAlexProvider(BaseProvider):
             if done:
                 return
             cur = nxt
+
+
+def normalize_source(value: str) -> str:
+    return str(value).rstrip("/").rsplit("/", 1)[-1]
 
 
 def reconstruct_abstract(inv: dict | None) -> str | None:

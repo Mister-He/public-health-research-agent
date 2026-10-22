@@ -10,7 +10,7 @@ scoring:
       name: Research alignment
       description: Fit with the core or exploratory research profile (methods, application, policy relevance).
       enabled: true
-      weight: 0.30
+      weight: 0.25
       method: llm
       rubric_version: "1.0"
       prompt: prompts/alignment.md
@@ -20,7 +20,7 @@ scoring:
       name: Methodological innovation
       description: Novelty of the method (new method / new combination / new application / incremental).
       enabled: true
-      weight: 0.25
+      weight: 0.20
       method: llm
       rubric_version: "1.0"
       prompt: prompts/innovation.md
@@ -40,7 +40,7 @@ scoring:
       name: Freshness
       description: Smooth exponential decay on the verified first-publication date.
       enabled: true
-      weight: 0.15
+      weight: 0.10
       method: deterministic
       evaluator: freshness
       rubric_version: "1.0"
@@ -66,6 +66,24 @@ scoring:
       rubric_version: "1.0"
       prompt: prompts/transferability.md
       missing_data_policy: reject
+
+    - id: journal_impact
+      name: Journal impact
+      description: >
+        Open impact-factor analogue: OpenAlex 2-year mean citedness of the journal (citations this
+        year to items from the previous two years / number of those items), on a smooth log scale.
+        Kept separate from methodological rigor, which ignores the venue.
+      enabled: true
+      weight: 0.15
+      method: deterministic
+      evaluator: journal_impact
+      rubric_version: "1.0"
+      params:
+        full_score_citedness: 15        # citedness at/above which the score is 100
+        listed_journal_min_score: 85    # journals in config/journals.yaml never score below this
+        preprint_score: 40              # preprints: neutral-low (eligible, but need strong content)
+        unknown_score: 30               # journal not found in OpenAlex / no ISSN
+      missing_data_policy: zero
 
   # Tolerance used by the validator when recomputing composite scores.
   tolerance: 1.0e-6

@@ -28,12 +28,12 @@ def test_weights_must_sum_to_one(project):
 
 def test_disabled_dimension_excluded_from_weight_sum(project):
     def fn(d):
-        dims = d["scoring"]["dimensions"]
-        dims[-1]["enabled"] = False          # transferability 0.05
-        dims[0]["weight"] = 0.35             # alignment absorbs it
+        dims = {x["id"]: x for x in d["scoring"]["dimensions"]}
+        dims["cross_disciplinary_transferability"]["enabled"] = False      # 0.05
+        dims["research_alignment"]["weight"] += 0.05                        # alignment absorbs it
     _edit(project, "scoring.yaml", fn)
     s = load_settings(project)
-    assert [d.id for d in s.scoring.enabled][-1] == "methodological_rigor"
+    assert "cross_disciplinary_transferability" not in [d.id for d in s.scoring.enabled]
 
 
 def test_api_key_fallback_cannot_be_enabled(project):

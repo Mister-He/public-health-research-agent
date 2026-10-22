@@ -150,6 +150,7 @@ validation_status: pending
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/{DOI}> |
 | Peer review / preprint status | Peer-reviewed journal article |
+| Journal impact | OpenAlex 2-yr mean citedness 17.0; h-index 154; on your journal list |
 | Overall score | **80.00** / 100 |
 
 **Abstract**

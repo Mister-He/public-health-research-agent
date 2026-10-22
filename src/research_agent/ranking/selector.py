@@ -22,6 +22,7 @@ from research_agent.llm.cache import current_evaluation
 from research_agent.ranking.diversity import penalty
 from research_agent.ranking.eligibility import Candidate, check, counterpart_ids, previously_recommended
 from research_agent.scoring.aggregator import Unscorable, combine, score_dimensions
+from research_agent.scoring.journal import journal_context
 from research_agent.scoring.registry import ScoreContext
 from research_agent.settings import Settings
 from research_agent.storage.database import Database, dumps
@@ -70,15 +71,17 @@ def build_candidates(db: Database, settings: Settings, report_date: date, snapsh
         if not found:
             continue
         eid, ev = found
-        c = Candidate(p, eid, ev, ev.profile_category)
-        reason = check(c, settings.ranking, report_date) or previously_recommended(db, c, report_date, settings.ranking)
+        c = Candidate(p, eid, ev, ev.profile_category, journal=journal_context(db, settings, p))
+        reason = check(c, settings.ranking, report_date, settings) or previously_recommended(db, c, report_date, settings.ranking)
         if reason:
-            key = reason.split(" ")[0] if not reason.startswith("research_alignment") else "below_alignment_threshold"
+            key = ("below_alignment_threshold" if reason.startswith("research_alignment") else
+                   "below_journal_impact_floor" if reason.startswith("journal impact") else
+                   "blocked_journal" if "block list" in reason else reason.split(" ")[0])
             excluded[key] = excluded.get(key, 0) + 1
             continue
         lex = lexical_tags_for(f"{p.title} {p.abstract or ''} {' '.join(p.author_keywords)}", active_tags)
         ctx = ScoreContext(paper=p, report_date=report_date, evaluation=ev, params={}, trend_scores=trend_scores,
-                           lexical_tags=lex, trend_snapshot_id=snapshot.id if snapshot else None)
+                           lexical_tags=lex, trend_snapshot_id=snapshot.id if snapshot else None, journal=c.journal)
         try:
             dims = score_dimensions(settings.scoring, ctx)
             comp = combine(settings.scoring, dims)

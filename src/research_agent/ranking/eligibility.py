@@ -21,10 +21,17 @@ class Candidate:
     dimensions: dict | None = None
     tags: frozenset[str] = frozenset()
     ineligible: str | None = None
+    journal: dict | None = None
 
 
-def check(c: Candidate, cfg: RankingConfig, report_date: date) -> str | None:
+def check(c: Candidate, cfg: RankingConfig, report_date: date, settings=None) -> str | None:
     p = c.paper
+    if c.journal is not None and settings is not None:
+        from research_agent.scoring.journal import floor_reason
+
+        reason = floor_reason(c.journal, settings)
+        if reason:
+            return reason
     if p.is_retracted:
         return "retracted"
     if p.validation_status == "failed":

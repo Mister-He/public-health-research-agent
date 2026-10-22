@@ -38,7 +38,8 @@ def check_rendered_fields(pp: ParsedPaper, paper: Paper, expected_view: dict, re
     ok("title_matches_record", pp.heading == expected_view["title"], f"{pp.heading!r} != {expected_view['title']!r}")
     for field_name, key in (("Authors", "authors_cell"), ("Journal / server", "venue_cell"),
                             ("Publication date", "date_cell"), ("DOI", "doi_cell"), ("PMID", "pmid_cell"),
-                            ("URL", "url_cell"), ("Peer review / preprint status", "status_cell")):
+                            ("URL", "url_cell"), ("Peer review / preprint status", "status_cell"),
+                            ("Journal impact", "impact_cell")):
         ok(f"field:{field_name}", pp.fields.get(field_name) == expected_view[key],
            f"{field_name}: {pp.fields.get(field_name)!r} != {expected_view[key]!r}")
     ok("keywords_match_record", pp.labels.get("Author keywords", "").lstrip(":").strip() == expected_view["keywords_cell"],

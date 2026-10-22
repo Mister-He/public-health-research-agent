@@ -15,7 +15,7 @@ from research_agent.validation.results import Check
 FRONT_MATTER_KEYS = {"date", "timezone", "generated_at_utc", "paper_count", "pipeline_version", "scoring_version",
                      "trend_snapshot_version", "validation_status"}
 FIELD_ROWS = ["Canonical ID", "Rank", "Authors", "Journal / server", "Publication date", "DOI", "PMID", "URL",
-              "Peer review / preprint status", "Overall score"]
+              "Peer review / preprint status", "Journal impact", "Overall score"]
 PLACEHOLDERS = re.compile(r"\{\{|\}\}|\{%|%\}|\bTODO\b|\bTBD\b|<placeholder>", re.I)
 PY_LEAKS = re.compile(r"\bNone\b|\bnan\b|\bundefined\b|\bNaN\b")      # case-sensitive value leaks
 FILENAME = re.compile(r"^\d{4}-\d{2}-\d{2}\.md$")

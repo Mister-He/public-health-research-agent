@@ -95,7 +95,7 @@ def test_custom_dimension_registration(project):
 
     p = project / "config" / "scoring.yaml"
     data = yaml.safe_load(p.read_text())
-    data["scoring"]["dimensions"][0]["weight"] = 0.25
+    data["scoring"]["dimensions"][0]["weight"] -= 0.05   # make room for the new 0.05 dimension
     data["scoring"]["dimensions"].append({"id": "open_access", "name": "Open access", "description": "OA bonus",
                                           "enabled": True, "weight": 0.05, "method": "deterministic",
                                           "evaluator": "open_access_bonus", "rubric_version": "1.0",

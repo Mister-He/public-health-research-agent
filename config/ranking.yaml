@@ -15,6 +15,12 @@ ranking:
   diversity:
     enabled: true
     lambda: 0.10
+  # Minimum journal impact (OpenAlex 2-year mean citedness). Applied BEFORE Claude assessment, so
+  # low-impact journals do not use analysis allowance. Never applied to journals listed in
+  # config/journals.yaml, to preprints (scored instead), or to journals without a metric.
+  journal_floor:
+    enabled: true
+    min_two_year_mean_citedness: 2.0
   resurfacing:
     allow_previously_recommended: false
     allow_on_preprint_published: true      # journal version of a recommended preprint may appear

@@ -8,6 +8,7 @@ from datetime import date
 from research_agent.llm.structured_output import PaperEvaluation
 from research_agent.ranking.eligibility import Candidate, check
 from research_agent.scoring.aggregator import Unscorable, recompute_overall
+from research_agent.scoring.journal import journal_context
 from research_agent.scoring.registry import ScoreContext, get_evaluator
 from research_agent.settings import Settings
 from research_agent.storage.database import Database
@@ -52,15 +53,16 @@ def validate_scores(db: Database, settings: Settings, report_date: date) -> list
             ok(f"llm_score_matches_evaluation:{d.id}", stored is not None and abs(stored - ev.dimensions[d.id].score) <= tol,
                f"{stored} vs evaluation {ev.dimensions[d.id].score if d.id in ev.dimensions else None}")
         p = load_paper(db, r["paper_id"])
+        jctx = journal_context(db, settings, p)
         for d in cfg.enabled:
             if d.method == "deterministic":
-                res = get_evaluator(d.evaluator)(ScoreContext(p, report_date, ev, d.params))  # type: ignore[arg-type]
+                res = get_evaluator(d.evaluator)(ScoreContext(p, report_date, ev, d.params, journal=jctx))  # type: ignore[arg-type]
                 stored = dims.get(d.id, {}).get("score")
                 exp = 0.0 if res.score is None and d.missing_data_policy == "zero" else res.score
                 ok(f"deterministic_recomputed:{d.id}", exp is not None and stored is not None and abs(exp - stored) <= tol,
                    f"recomputed {exp} != stored {stored}")
-        c = Candidate(p, r["evaluation_id"], ev, ev.profile_category)
-        reason_inel = check(c, settings.ranking, report_date)
+        c = Candidate(p, r["evaluation_id"], ev, ev.profile_category, journal=jctx)
+        reason_inel = check(c, settings.ranking, report_date, settings)
         ok("hard_eligibility", reason_inel is None, reason_inel or "")
         ok("no_duplicate_canonical", cid not in seen_ids and r["paper_id"] not in seen_pids, "duplicate paper")
         seen_ids.add(cid)

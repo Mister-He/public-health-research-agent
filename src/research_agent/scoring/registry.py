@@ -24,6 +24,7 @@ class ScoreContext:
     trend_scores: dict[str, float] = field(default_factory=dict)       # tag_id -> 0..1 (latest snapshot)
     lexical_tags: dict[str, float] = field(default_factory=dict)       # tag_id -> confidence (lexical match)
     trend_snapshot_id: int | None = None
+    journal: dict | None = None                                        # scoring.journal.journal_context()
 
 
 @dataclass

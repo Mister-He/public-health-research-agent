@@ -44,3 +44,14 @@ def trend_relevance(ctx: ScoreContext) -> DimensionScore:
     score = 100.0 * (1 - prod)
     return DimensionScore(round(score, 6), "hybrid", {"tags": contributions, "snapshot_id": ctx.trend_snapshot_id},
                           None)
+
+
+@register("journal_impact")
+def journal_impact(ctx: ScoreContext) -> DimensionScore:
+    """Open impact-factor analogue (see scoring/journal.py); never mixed into methodological rigor."""
+    from research_agent.scoring.journal import describe, impact_score
+
+    if ctx.journal is None:
+        return DimensionScore(None, "deterministic", {"reason": "no journal context"})
+    return DimensionScore(impact_score(ctx.journal, ctx.params), "deterministic",
+                          {**ctx.journal, "description": describe(ctx.journal)}, 1.0)

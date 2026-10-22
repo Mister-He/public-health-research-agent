@@ -82,6 +82,8 @@ def test_snapshot_reproducible_and_idempotent(db, settings):
 
 def test_strict_as_of_excludes_future_discoveries(db, settings):
     _seed(db, settings)
+    # Fixed discovery times (not the wall clock), so the test does not depend on today's date.
+    db.execute("UPDATE papers SET discovered_at=?", (f"{REPORT_DATE.isoformat()}T01:00:00Z",))
     db.execute("UPDATE papers SET discovered_at='2026-12-01T00:00:00Z' WHERE canonical_id='doi:10.5555/fixture.0004'")
     s = update_trends(db, settings, REPORT_DATE, kind="daily", strict_as_of=True)
     full = update_trends(db, settings, REPORT_DATE + timedelta(days=1), kind="daily")

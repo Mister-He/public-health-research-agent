@@ -3,7 +3,7 @@
 # Keywords are matched as phrases (case-insensitive, hyphen/space tolerant);
 # they also seed provider queries (see search_queries.yaml).
 profile_version: "1.0"
-owner: "Yichen He"
+owner: "Mister He"
 
 topics:
   - id: epi_modelling

@@ -39,6 +39,14 @@ then re-queued on the next run, and old evaluations stay stored and interpretabl
 metadata (those already queued/evaluated) can be re-assessed; brief-info papers are re-queued only
 if they are re-retrieved with new content.
 
+## DeepSeek (optional provider)
+
+With `provider: deepseek`, the DeepSeek steps write the same status files with the same categories:
+`auth` (401, key missing or rejected), `quota` (402 balance exhausted — top up — or 429 rate
+limit), `budget` (`max_tokens_per_run` reached; the rest stays queued for the next run),
+`action_failure` (5xx after retries, invalid request). Malformed or ungrounded output is rejected
+exactly as for Claude. Cost = recorded `input_tokens`/`output_tokens` × DeepSeek's current prices.
+
 ## Provider failures
 
 A failing provider/query keeps its watermark and is retried next run from the same point;

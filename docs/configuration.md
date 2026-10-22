@@ -13,7 +13,7 @@ every run and report.
 | `scoring.yaml` | Dimensions: id, name, description, weight, method, rubric_version, prompt/evaluator, params, missing_data_policy |
 | `trends.yaml` | Taxonomy (status, pinned, aliases, parents, match rules, manual_override, seed) and trend parameters (windows, weights, smoothing, minimum sample, corpus threshold, reassessment weekday, external signals, proposal limits) |
 | `ranking.yaml` | Max recommendations, minimum verified papers, horizon, relevance thresholds, exploratory cap, completeness minimum, diversity λ, resurfacing rules |
-| `llm.yaml` | `provider: claude_code_action`, `auth: oauth_subscription`, `allow_api_key_fallback: false` (enforced), model, prompt version, per-stage turn/time/batch/workload limits, shortlist sizes, queue retry policy, optional local Ollama |
+| `llm.yaml` | Analysis provider: `claude_code_action` + `oauth_subscription` (default) or `deepseek` + `api_key` (optional, pay-per-use); `allow_api_key_fallback: false` (enforced — never switches automatically), model, prompt version, per-stage turn/time/batch/workload limits, DeepSeek model/token budget, shortlist sizes, queue retry policy, optional local Ollama |
 | `reporting.yaml` | Time zone, narrative word range, abstract policy (`full` / `link_only`, per-license overrides), footer |
 | `validation.yaml` | Online identity and URL checks, timeouts, repair rounds, title-match ratio |
 | `runtime.yaml` | DB path, windows (overlap 7 d, reconciliation 30 d, baseline 180 d, horizon 30 d, backfill max), chunks per run, data-branch name/path, git remote/branch |
@@ -40,4 +40,5 @@ every run and report.
 | `NCBI_API_KEY` | secret (optional) | 10 instead of 3 PubMed requests/s |
 | `OPENALEX_API_KEY` | secret (optional, recommended) | own $1/day budget and cursor paging (keyless: shared $0.10/day per IP, page paging) |
 | `CLAUDE_CODE_OAUTH_TOKEN` | secret (required in CI) | passed only to `claude-code-action` |
+| `DEEPSEEK_API_KEY` | secret (only with `provider: deepseek`) | pay-per-use DeepSeek API key; exposed only to the DeepSeek workflow steps |
 | `ANTHROPIC_API_KEY` | must **not** exist | the workflow fails if this secret is present |

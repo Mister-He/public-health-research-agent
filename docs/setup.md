@@ -45,6 +45,21 @@ Do **not** create `ANTHROPIC_API_KEY`; the workflow refuses to run if that secre
 pay-as-you-go billing can never be used by accident. Re-run `claude setup-token` and update the
 secret when the token expires or is revoked (see operations.md → OAuth).
 
+### Optional: DeepSeek instead of Claude (pay-per-use)
+
+To use DeepSeek for the analysis steps, create an API key at https://platform.deepseek.com
+(set a spending limit there), then:
+
+```bash
+gh secret set DEEPSEEK_API_KEY -R <you>/public-health-research-agent
+```
+
+and in `config/llm.yaml` set `provider: deepseek` and `auth: api_key` (commit and push). Only one
+provider is used per run; there is no automatic fallback. Switching providers re-queues papers for
+the new model (evaluations are cached per model). Spend is bounded by
+`llm.stages.scoring.max_papers_per_run` and `llm.deepseek.max_tokens_per_run`; every run records its
+token counts in `llm_usage` and in the run summary.
+
 ## 4. Other secrets and variables
 
 ```bash

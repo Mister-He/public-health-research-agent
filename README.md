@@ -19,6 +19,10 @@ An unattended literature monitor for a computational public-health researcher. E
 If Claude is unavailable (expired token, usage limit), ingestion still completes, the backlog is kept
 and retried, and no unverified report is published.
 
+**Optional DeepSeek provider:** set `provider: deepseek` / `auth: api_key` in `config/llm.yaml` and
+add a `DEEPSEEK_API_KEY` secret to use the DeepSeek API (pay-per-use) instead of Claude. Same prompts,
+same JSON contract, same validation; one provider per run, never an automatic fallback.
+
 → Architecture: [docs/architecture.md](docs/architecture.md) · Decisions: [docs/decisions/](docs/decisions/)
 · Example output (synthetic fixture data): [docs/examples/fixture-digest-2026-10-21.md](docs/examples/fixture-digest-2026-10-21.md)
 

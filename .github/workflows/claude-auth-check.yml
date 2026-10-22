@@ -46,7 +46,8 @@ jobs:
             echo "::error title=Claude auth check failed::The action produced no execution log (outcome: ${OUTCOME}). Is the CLAUDE_CODE_OAUTH_TOKEN secret set?"
             exit 1
           fi
-          is_error=$(jq -r '[.[] | select(.type=="result")] | last | .is_error // true' "${EXEC_FILE}")
+          # Note: `.is_error // true` would turn false into true (jq's // treats false as missing).
+          is_error=$(jq -r '[.[] | select(.type=="result")] | last | if .is_error == false then "false" else "true" end' "${EXEC_FILE}")
           # Only the first line of the result is printed (an error message, or "OK").
           msg=$(jq -r '[.[] | select(.type=="result")] | last | (.result // .subtype // "no result") | tostring' "${EXEC_FILE}" | head -n 1 | cut -c1-240)
           if [ "${is_error}" = "false" ] && [ "${OUTCOME}" = "success" ]; then

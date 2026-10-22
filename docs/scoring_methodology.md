@@ -21,16 +21,36 @@
 
 | Dimension | Weight | Method | Computed by |
 |---|---:|---|---|
-| Research alignment | 0.30 | llm | Claude, `prompts/alignment.md` |
-| Methodological innovation | 0.25 | llm | Claude, `prompts/innovation.md` (novelty class + basis) |
+| Research alignment | 0.25 | llm | Claude, `prompts/alignment.md` |
+| Methodological innovation | 0.20 | llm | Claude, `prompts/innovation.md` (novelty class + basis) |
 | Emerging trend relevance | 0.15 | hybrid | Python: `100 × (1 − Π(1 − confidence_t × trend_t))` over Claude-assigned and lexical tags |
-| Freshness | 0.15 | deterministic | Python: `100 × 0.5^(age_days / 14)` on the verified first-publication date |
+| Freshness | 0.10 | deterministic | Python: `100 × 0.5^(age_days / 14)` on the verified first-publication date |
 | Evidence and methodological rigor | 0.10 | llm | Claude, `prompts/methodology_review.md` |
 | Cross-disciplinary transferability | 0.05 | llm | Claude, `prompts/transferability.md` |
+| Journal impact | 0.15 | deterministic | Python: OpenAlex 2-year mean citedness on a log scale (see below) |
 
 `overall = Σ weightᵢ × scoreᵢ` (enabled weights must sum to 1). Python computes it; Claude never
 sees weights. Missing-data policy per dimension: `reject` (unrankable), `zero`, or
 `exclude_and_renormalize`. A failed Claude assessment is never replaced by a default score.
+
+## Journal impact (open impact-factor analogue)
+
+The official Journal Impact Factor (Clarivate JCR) is proprietary and has no free API, so the
+pipeline uses **OpenAlex `2yr_mean_citedness`**: citations this year to items from the previous
+two years ÷ number of those items (the same idea as the JIF; values differ, ranking is similar).
+Metrics are cached per ISSN (`journal_metrics`, refreshed every 30 days).
+
+- Score: `100 × min(1, ln(1+c) / ln(1+15))` — e.g. c = 2 → 40, c = 5 → 65, c = 8.6 → 82, c ≥ 15 → 100.
+- **Trusted list** (`config/journals.yaml`): never below 85 and never floored, because citation norms
+  differ by field (methods and health-economics journals cite less than general medicine).
+- **Preprints**: fixed 40 (eligible, but they need strong content to rank). **No metric**: 30.
+- **Floor** (`ranking.journal_floor`, default 2.0): an unlisted journal with a known citedness below the
+  floor is excluded — *before* Claude assessment, so it costs nothing. `blocked:` journals in
+  `config/journals.yaml` are always excluded.
+- Methodological rigor stays venue-independent; impact is a separate, visible dimension.
+- **Known limitation:** journals that publish many conference abstracts (e.g. *Value in Health*,
+  OpenAlex citedness ≈ 0.3 in Oct 2026) look artificially weak. Put such journals on the trusted
+  list; consider whether any unlisted journal you value falls below the floor.
 
 ## What Claude returns (schema-validated, `llm/structured_output.py`)
 

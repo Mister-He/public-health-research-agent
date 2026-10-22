@@ -31,6 +31,8 @@ every run and report.
 | Maximum daily API cost | no paid API is used; Claude usage counts against the subscription and is bounded by the workload/turn limits above | `llm.yaml` |
 | Search backfill window | 180-day baseline; overlap 7 days; backfill ≤ 365 days | `runtime.windows` |
 | Prescreen shortlist threshold | 0.25 | `retrieval/screening.py` (`MIN_PRESCREEN`) |
+| Journal impact floor (unlisted journals) | OpenAlex 2-yr mean citedness 2.0 | `ranking.journal_floor` |
+| Journal impact weight / trusted minimum / preprint score | 0.15 / 85 / 40 | `scoring.yaml` → `journal_impact` |
 
 ## Environment variables
 

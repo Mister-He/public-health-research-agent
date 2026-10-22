@@ -2,16 +2,16 @@
 ---
 date: '2026-10-21'
 timezone: Asia/Shanghai
-generated_at_utc: '2026-10-21T17:01:18Z'
+generated_at_utc: '2026-10-22T07:28:47Z'
 paper_count: 10
 pipeline_version: 0.1.0
-scoring_version: scoring-7474ce1172
+scoring_version: scoring-d37b266615
 rubric_version: rubric-83f3f3d704
 prompt_version: '1.0'
 model: fixture-simulated
 trend_snapshot_version: trend-v1-db2b77f24b
 narrative_source: simulated fixture provider, not Claude
-config_hash: 355166e1a2
+config_hash: 893523ed82
 run_id: example
 validation_status: passed
 ---
@@ -39,7 +39,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0001> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **80.44** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **72.41** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -53,17 +54,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99), Cancer screening optimization (trend score 0.99), Decision-making under uncertainty (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 78.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 78.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 100.00 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 90.57 | Python | 1.00 |
+| Freshness | 0.10 | 90.57 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **80.44** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **72.41** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: New method. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new method. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -84,7 +86,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0002> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **72.77** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **66.36** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -98,17 +101,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99), Infectious disease elimination modelling (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 99.94 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 86.20 | Python | 1.00 |
+| Freshness | 0.10 | 86.20 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **72.77** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **66.36** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -116,57 +120,12 @@ validation_status: passed
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 3. Reinforcement learning for adaptive cancer screening policies in a simulated population
-
-| Field | Value |
-|---|---|
-| Canonical ID | `doi:10.5555/fixture.0011` |
-| Rank | 3 (raw-score rank 3) |
-| Authors | Testauthor11, A.; Example, B. |
-| Journal / server | Journal of Synthetic Public Health Fixtures |
-| Publication date | 2026-10-18 (first online); indexed 2026-10-18 |
-| DOI | [10.5555/fixture.0011](https://doi.org/10.5555/fixture.0011) |
-| PMID | Not available from verified sources |
-| URL | <https://doi.org/10.5555/fixture.0011> |
-| Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **71.55** / 100 |
-
-**Abstract** *(original abstract, verbatim from fixture data)*
-
-> SYNTHETIC TEST RECORD, not a real publication. We apply reinforcement learning to a Markov decision process representing adaptive cancer screening policies in a simulated population, comparing learned policies with guideline strategies.
-
-**Author keywords:** reinforcement learning; Markov decision process
-
-**MeSH terms:** No MeSH terms in verified sources
-
-**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: Reinforcement learning for adaptive interventions
-
-**Matched emerging trend tags:** Reinforcement learning for adaptive interventions (trend score 0.92)
-
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
-
-| Dimension | Weight | Score | Method | Confidence |
-|---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
-| Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 86.20 | Python | 1.00 |
-| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
-| Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **71.55** | weighted sum | |
-
-**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
-
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, rl_sequential.
-
-**Evidence and confidence limitations:** No limitations reported.
-
-### 4. Large language model agents for automating systematic review screening
+### 3. Large language model agents for automating systematic review screening
 
 | Field | Value |
 |---|---|
 | Canonical ID | `doi:10.5555/fixture.0013` |
-| Rank | 4 (raw-score rank 4) |
+| Rank | 3 (raw-score rank 3) |
 | Authors | Testauthor13, A.; Example, B. |
 | Journal / server | Journal of Synthetic Public Health Fixtures |
 | Publication date | 2026-10-15 (first online); indexed 2026-10-15 |
@@ -174,7 +133,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0013> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **71.39** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **65.58** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -188,17 +148,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** LLM-assisted evidence synthesis (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 97.65 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 74.30 | Python | 1.00 |
+| Freshness | 0.10 | 74.30 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 60.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **71.39** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **65.58** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -206,12 +167,12 @@ validation_status: passed
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 5. Optimal risk-stratified liver cancer screening via decision-analytic Markov models
+### 4. Optimal risk-stratified liver cancer screening via decision-analytic Markov models
 
 | Field | Value |
 |---|---|
 | Canonical ID | `doi:10.5555/fixture.0005` |
-| Rank | 5 (raw-score rank 5) |
+| Rank | 4 (raw-score rank 4) |
 | Authors | Testauthor5, A.; Example, B. |
 | Journal / server | Journal of Synthetic Public Health Fixtures |
 | Publication date | 2026-10-15 (first online); indexed 2026-10-15 |
@@ -219,7 +180,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0005> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **70.99** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **65.18** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -233,21 +195,69 @@ validation_status: passed
 
 **Matched emerging trend tags:** Cancer screening optimization (trend score 0.99), Decision-making under uncertainty (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 99.98 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 74.30 | Python | 1.00 |
+| Freshness | 0.10 | 74.30 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **70.99** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **65.18** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
 **Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, calibration_uq, policy_optimization, simulation_models.
+
+**Evidence and confidence limitations:** No limitations reported.
+
+### 5. Reinforcement learning for adaptive cancer screening policies in a simulated population
+
+| Field | Value |
+|---|---|
+| Canonical ID | `doi:10.5555/fixture.0011` |
+| Rank | 5 (raw-score rank 5) |
+| Authors | Testauthor11, A.; Example, B. |
+| Journal / server | Journal of Synthetic Public Health Fixtures |
+| Publication date | 2026-10-18 (first online); indexed 2026-10-18 |
+| DOI | [10.5555/fixture.0011](https://doi.org/10.5555/fixture.0011) |
+| PMID | Not available from verified sources |
+| URL | <https://doi.org/10.5555/fixture.0011> |
+| Peer review / preprint status | Peer-reviewed journal article |
+| Journal impact | No journal metric available |
+| Overall score | **65.14** / 100 |
+
+**Abstract** *(original abstract, verbatim from fixture data)*
+
+> SYNTHETIC TEST RECORD, not a real publication. We apply reinforcement learning to a Markov decision process representing adaptive cancer screening policies in a simulated population, comparing learned policies with guideline strategies.
+
+**Author keywords:** reinforcement learning; Markov decision process
+
+**MeSH terms:** No MeSH terms in verified sources
+
+**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: Reinforcement learning for adaptive interventions
+
+**Matched emerging trend tags:** Reinforcement learning for adaptive interventions (trend score 0.92)
+
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+
+| Dimension | Weight | Score | Method | Confidence |
+|---|---:|---:|---|---:|
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
+| Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
+| Freshness | 0.10 | 86.20 | Python | 1.00 |
+| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
+| Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **65.14** | weighted sum | |
+
+**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
+
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, rl_sequential.
 
 **Evidence and confidence limitations:** No limitations reported.
 
@@ -264,7 +274,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0003> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **70.92** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **64.72** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -278,17 +289,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Distributional cost-effectiveness analysis (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 82.03 | Python | 1.00 |
+| Freshness | 0.10 | 82.03 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **70.92** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **64.72** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -309,7 +321,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0006> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **70.36** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **64.72** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -323,17 +336,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 99.33 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 70.71 | Python | 1.00 |
+| Freshness | 0.10 | 70.71 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **70.36** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **64.72** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -354,7 +368,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0004> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **70.33** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **64.33** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -368,17 +383,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Agent-based public health simulation (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 78.07 | Python | 1.00 |
+| Freshness | 0.10 | 78.07 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **70.33** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **64.33** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -399,7 +415,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0012> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **68.95** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **63.35** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -413,17 +430,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** LLM-assisted evidence synthesis (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 70.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 70.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 97.65 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 82.03 | Python | 1.00 |
+| Freshness | 0.10 | 82.03 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 60.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **68.95** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **63.35** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -444,7 +462,8 @@ validation_status: passed
 | PMID | Not available from verified sources |
 | URL | <https://doi.org/10.5555/fixture.0008> |
 | Peer review / preprint status | Peer-reviewed journal article |
-| Overall score | **67.76** / 100 |
+| Journal impact | No journal metric available |
+| Overall score | **62.61** / 100 |
 
 **Abstract** *(original abstract, verbatim from fixture data)*
 
@@ -458,17 +477,18 @@ validation_status: passed
 
 **Matched emerging trend tags:** Causal inference and simulation integration (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-7474ce1172`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
-| Research alignment | 0.30 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.25 | 50.00 | Claude (rubric) | 0.70 |
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
 | Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.15 | 60.95 | Python | 1.00 |
+| Freshness | 0.10 | 60.95 | Python | 1.00 |
 | Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
 | Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| **Overall** | **1.00** | **67.76** | weighted sum | |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **62.61** | weighted sum | |
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
@@ -491,6 +511,6 @@ Publication horizon: 30 days before 2026-10-21; retrieval overlap 7 days; trend 
 
 Providers: n/a.
 
-Versions: pipeline 0.1.0, scoring `scoring-7474ce1172`, rubric `rubric-83f3f3d704`, prompts 1.0, trend snapshot `trend-v1-db2b77f24b`, configuration `355166e1a2`.
+Versions: pipeline 0.1.0, scoring `scoring-d37b266615`, rubric `rubric-83f3f3d704`, prompts 1.0, trend snapshot `trend-v1-db2b77f24b`, configuration `893523ed82`.
 
 Source metadata (titles, authors, dates, identifiers, abstracts, keywords, MeSH) comes verbatim from the named providers. Assessments, tags and the overview marked as AI interpretation are generated by Claude from that metadata and may be wrong; novelty judgements are preliminary when based on abstracts only.

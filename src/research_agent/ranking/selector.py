@@ -49,7 +49,7 @@ def _evaluated_papers(db: Database, settings: Settings) -> list[tuple[int, int]]
     rows = db.query(
         "SELECT p.id AS pid, e.id AS eid FROM papers p JOIN evaluations e ON e.paper_id=p.id AND"
         " e.metadata_version=p.metadata_version WHERE e.model=? AND e.prompt_version=? AND e.rubric_version=?"
-        " ORDER BY p.id", (llm.model, llm.prompt_version, settings.scoring.rubric_version()))
+        " ORDER BY p.id", (llm.active_model, llm.prompt_version, settings.scoring.rubric_version()))
     return [(r["pid"], r["eid"]) for r in rows]
 
 
@@ -65,7 +65,7 @@ def build_candidates(db: Database, settings: Settings, report_date: date, snapsh
             excluded["excluded_by_validation"] = excluded.get("excluded_by_validation", 0) + 1
             continue
         p = load_paper(db, pid)
-        found = current_evaluation(db, pid, p.metadata_version, model=llm.model, prompt_version=llm.prompt_version,
+        found = current_evaluation(db, pid, p.metadata_version, model=llm.active_model, prompt_version=llm.prompt_version,
                                    rubric_version=settings.scoring.rubric_version())
         if not found:
             continue

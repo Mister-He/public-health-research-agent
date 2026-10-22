@@ -98,7 +98,7 @@ def shortlist_and_enqueue(db: Database, settings: Settings, report_date: date) -
         if kind == "exploratory" and expl >= expl_cap:
             continue
         added = q.enqueue(db, paper_id=r["id"], canonical_id=r["canonical_id"], metadata_version=r["metadata_version"],
-                          rubric_version=rubric, prompt_version=llm.prompt_version, model=llm.model,
+                          rubric_version=rubric, prompt_version=llm.prompt_version, model=llm.active_model,
                           priority=r["prescreen_score"], intended_report_date=report_date)
         if added:
             st.enqueued += 1

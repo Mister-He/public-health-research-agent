@@ -106,7 +106,8 @@ class HttpClient:
         return random.uniform(0, min(self.backoff_max, self.backoff_base * (2 ** attempt)))
 
     def request(self, provider: str, method: str, url: str, *, params: dict[str, Any] | None = None,
-                headers: dict[str, str] | None = None, retry_statuses: set[int] = RETRYABLE_STATUS) -> httpx.Response:
+                headers: dict[str, str] | None = None, retry_statuses: set[int] = RETRYABLE_STATUS,
+                json: Any = None) -> httpx.Response:
         u = self._u(provider)
         last_error = ""
         status = None
@@ -114,7 +115,7 @@ class HttpClient:
             self._throttle(provider)
             u.requests += 1
             try:
-                resp = self.client.request(method, url, params=params, headers=headers)
+                resp = self.client.request(method, url, params=params, headers=headers, json=json)
             except (httpx.TimeoutException, httpx.TransportError) as exc:
                 last_error = f"{type(exc).__name__}"
                 status = None

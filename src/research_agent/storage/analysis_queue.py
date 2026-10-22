@@ -20,7 +20,7 @@ from datetime import date, datetime, timedelta
 from research_agent.storage.database import Database
 from research_agent.timeutil import iso_utc, utcnow
 
-OUTAGE = {"auth", "quota", "action_failure", "timeout", "max_turns", "cancelled"}
+OUTAGE = {"auth", "quota", "budget", "action_failure", "timeout", "max_turns", "cancelled"}
 FORMAT = {"malformed", "ungrounded", "missing_output", "identity_mismatch"}
 
 

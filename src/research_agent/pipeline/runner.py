@@ -284,6 +284,7 @@ def publish_stage(db: Database, settings: Settings, report_date: date, *, run_id
         funnel = {"raw_retrieved": ingest_summary.get("raw_retrieved"), "unique_papers": ingest_summary.get("unique_papers"),
                   "prescreen_shortlist_pool": ingest_summary.get("prescreen_shortlist_pool"), **sel.funnel}
         source = ("simulated fixture provider, not Claude" if settings.llm.model == "fixture-simulated"
+                  else f"DeepSeek API, model {settings.llm.active_model}" if settings.llm.provider == "deepseek"
                   else f"Claude via claude-code-action, model {settings.llm.model}")
         text = render(db, settings, report_date, narrative=narrative, narrative_source=source,
                       funnel=funnel, providers=providers_status, snapshot_payload=payload,

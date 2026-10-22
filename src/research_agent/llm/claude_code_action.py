@@ -85,7 +85,7 @@ def build_scoring_manifest(db: Database, settings: Settings, *, run_id: str, rep
     policy = q.QueuePolicy.from_config(llm.queue)
     cap = limit if limit is not None else (st.max_papers_per_run or 40)
     jobs = q.lease(db, run_id=run_id, limit=cap, policy=policy, rubric_version=settings.scoring.rubric_version(),
-                   prompt_version=llm.prompt_version, model=llm.model)
+                   prompt_version=llm.prompt_version, model=llm.active_model)
     root = settings.analysis_dir / SCORING_DIR
     if root.exists():
         for f in root.glob("*.json"):
@@ -118,7 +118,7 @@ def build_scoring_manifest(db: Database, settings: Settings, *, run_id: str, rep
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
         "report_date": report_date.isoformat(),
-        "model": llm.model,
+        "model": llm.active_model,
         "prompt_version": llm.prompt_version,
         "rubric_version": settings.scoring.rubric_version(),
         "task_prompt": "prompts/scoring_task.md",
@@ -303,7 +303,7 @@ def import_scoring_outputs(db: Database, settings: Settings, *, run_id: str,
             q.complete(db, j["id"], eid)
             summ.completed += 1
             summ.cache_hits += hit
-        record_llm_usage(db, run_id, "scoring", llm.model, status, papers_sent=summ.leased,
+        record_llm_usage(db, run_id, "scoring", llm.active_model, status, papers_sent=summ.leased,
                          papers_completed=summ.completed, cache_hits=summ.cache_hits)
     return summ
 

@@ -1,11 +1,24 @@
-# Claude runs ONLY through anthropics/claude-code-action in GitHub Actions,
-# authenticated with the subscription OAuth token (secret CLAUDE_CODE_OAUTH_TOKEN).
-# The Python worker never calls the Anthropic API. There is no API-key fallback.
+# Exactly ONE analysis provider is used per run (no automatic fallback between them):
+#
+#   provider: claude_code_action / auth: oauth_subscription   (DEFAULT)
+#       anthropics/claude-code-action in GitHub Actions with the subscription OAuth token
+#       (secret CLAUDE_CODE_OAUTH_TOKEN). Included in your Claude Pro/Max subscription.
+#
+#   provider: deepseek / auth: api_key                         (OPTIONAL, PAY-PER-USE)
+#       Python calls the DeepSeek API (OpenAI-compatible) with secret DEEPSEEK_API_KEY.
+#       Billed by DeepSeek per token; bounded by max_papers_per_run and
+#       deepseek.max_tokens_per_run. Token usage of every run is recorded in llm_usage.
+#
+# Both providers receive the same prompts and return the same JSON, which passes the same
+# schema + grounding validation. Evaluations are cached per model, so switching providers
+# re-queues papers for the new model instead of mixing assessments.
 llm:
-  provider: claude_code_action
-  auth: oauth_subscription
+  # To use DeepSeek, change BOTH lines:  provider: deepseek   and   auth: api_key
+  provider: claude_code_action    # claude_code_action (default) | deepseek (pay-per-use)
+  auth: oauth_subscription        # oauth_subscription (with claude_code_action) | api_key (with deepseek)
   allow_api_key_fallback: false   # must stay false; validated at load
-  model: sonnet                   # Claude Code model alias or full model id
+  model: sonnet                   # Claude model (used when provider is claude_code_action);
+                                  # the DeepSeek model is set under `deepseek:` below
   prompt_version: "1.0"
   stages:
     scoring:
@@ -29,6 +42,14 @@ llm:
     backoff_base_hours: 6         # retry_after = base * 2^(attempt-1), capped
     backoff_max_hours: 72
     quota_retry_hours: 20         # auth/quota outages: retry next scheduled run
+  deepseek:
+    base_url: https://api.deepseek.com
+    model: deepseek-flash            # or deepseek-v4-pro (verified model names, 2026-10-22)
+    api_key_env: DEEPSEEK_API_KEY
+    max_output_tokens: 8000          # per request (one batch); truncated JSON is rejected
+    request_timeout_seconds: 300
+    max_tokens_per_run: 600000       # hard budget (input+output) per stage call (scoring dominates); rest stays queued
+    max_retries: 3
   local:
     # Optional Ollama provider for LOCAL experimentation only (never in CI).
     ollama_enabled: false

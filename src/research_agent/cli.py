@@ -93,6 +93,12 @@ def cmd_doctor(s: Settings, args) -> int:
         problems.append("RESEARCH_AGENT_CONTACT_EMAIL is not set (required for NCBI/Crossref/OpenAlex etiquette)")
     for k in ("NCBI_API_KEY", "OPENALEX_API_KEY"):
         info[k] = "set" if os.environ.get(k) else "not set (optional)"
+    info["llm_provider"] = f"{s.llm.provider} ({s.llm.auth}), model {s.llm.active_model}"
+    if s.llm.provider == "deepseek":
+        k = s.llm.deepseek.api_key_env
+        info[k] = "set" if os.environ.get(k) else "NOT SET"
+        if not os.environ.get(k) and not in_ci:
+            problems.append(f"provider is deepseek but {k} is not set (pay-per-use API key)")
     try:
         db = _db(s, args.db)
         ok = db.scalar("PRAGMA integrity_check")
@@ -169,7 +175,14 @@ def cmd_score(s: Settings, args) -> int:
 
         simulate_scoring(s)  # s already uses the fixture model id (see main)
         cca.write_status(s, cca.ActionStatus(stage="scoring", outcome="success"))
-    if args.provider in ("fixture", "import"):
+    if args.provider == "deepseek":
+        from research_agent.llm.deepseek_provider import run_stage
+
+        if s.llm.provider != "deepseek":
+            print("set `provider: deepseek` and `auth: api_key` in config/llm.yaml first (pay-per-use)", file=sys.stderr)
+            return 2
+        out["deepseek"] = run_stage(s, "scoring").to_json()
+    if args.provider in ("fixture", "import", "deepseek"):
         st = cca.read_status(s, "scoring") or cca.ActionStatus(stage="scoring", outcome="success")
         imp = cca.import_scoring_outputs(db, s, run_id=run_id, status=st)
         out["import"] = imp.__dict__
@@ -421,6 +434,21 @@ def cmd_ci(s: Settings, args) -> int:
         _gh_output(args=cca.claude_args(s, args.stage), prompt=cca.action_prompt(s, args.stage))
         print(cca.claude_args(s, args.stage))
         return 0
+    if a == "provider":
+        _gh_output(provider=s.llm.provider)
+        print(s.llm.provider)
+        return 0
+    if a == "analyze":
+        if s.llm.provider != "deepseek":
+            print(f"`ci analyze` runs API providers; configured provider is {s.llm.provider}", file=sys.stderr)
+            return 2
+        from research_agent.llm.deepseek_provider import run_stage
+
+        st = run_stage(s, args.stage)
+        if st.category:
+            print(f"::error title=DeepSeek {args.stage}: {st.category}::{st.error_message or st.detail}")
+        _print(st.to_json())
+        return 0
     if a == "classify":
         st = cca.classify_execution(args.stage, args.outcome, Path(args.execution_file) if args.execution_file else None)
         cca.write_status(s, st)
@@ -581,9 +609,10 @@ def build_parser() -> argparse.ArgumentParser:
     sc = sub.add_parser("score", help="lease jobs into a Claude manifest (and optionally import outputs)")
     sc.add_argument("--date", type=_date, default=local_today())
     sc.add_argument("--max-eval", type=int, default=None)
-    sc.add_argument("--provider", choices=["manifest", "import", "fixture"], default="manifest",
+    sc.add_argument("--provider", choices=["manifest", "import", "fixture", "deepseek"], default="manifest",
                     help="manifest: write files for claude-code-action; import: validate existing outputs; "
-                         "fixture: SIMULATED offline scores (testing only)")
+                         "fixture: SIMULATED offline scores (testing only); deepseek: call the DeepSeek API "
+                         "(requires provider: deepseek in llm.yaml; pay-per-use)")
 
     t = sub.add_parser("trends", help="trend statistics")
     t.add_argument("action", choices=["update"])
@@ -655,7 +684,8 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("--message")
 
     ci = sub.add_parser("ci", help="GitHub Actions stages")
-    ci.add_argument("action", choices=["ingest", "prepare", "publish", "validate", "backfill", "classify", "claude-args"])
+    ci.add_argument("action", choices=["ingest", "prepare", "publish", "validate", "backfill", "classify", "claude-args",
+                                       "provider", "analyze"])
     ci.add_argument("--snapshot", help="ingest: also export the snapshot here; prepare: restore from it")
     ci.add_argument("--reconcile", action="store_true", help="ingest: re-fetch the reconciliation window")
     ci.add_argument("--analysis-result", help="publish: result of the analysis job (success/failure/cancelled/skipped)")
@@ -698,7 +728,7 @@ def main(argv: list[str] | None = None) -> int:
         log.warning("FIXTURE MODE: assessments are simulated (model id 'fixture-simulated'), not Claude output")
     if args.cmd == "digest":
         return cmd_digest_generate(s, args) if args.action == "generate" else cmd_digest_validate(s, args)
-    if args.cmd == "ci" and args.action in ("claude-args", "classify") and not args.stage:
+    if args.cmd == "ci" and args.action in ("claude-args", "classify", "analyze") and not args.stage:
         print("--stage is required", file=sys.stderr)
         return 2
     return DISPATCH[args.cmd](s, args)

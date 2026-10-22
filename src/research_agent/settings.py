@@ -276,9 +276,19 @@ class LLMStage(StrictModel):
     max_papers_per_run: int | None = None
 
 
+class DeepSeekConfig(StrictModel):
+    base_url: str = "https://api.deepseek.com"
+    model: str = "deepseek-flash"
+    api_key_env: str = "DEEPSEEK_API_KEY"
+    max_output_tokens: int = Field(default=8000, ge=256, le=64000)
+    request_timeout_seconds: float = 300
+    max_tokens_per_run: int = Field(default=600_000, ge=1000)   # input+output budget per pipeline run
+    max_retries: int = Field(default=3, ge=0, le=6)
+
+
 class LLMConfig(StrictModel):
-    provider: Literal["claude_code_action", "ollama", "fixture"]
-    auth: Literal["oauth_subscription"]
+    provider: Literal["claude_code_action", "deepseek", "ollama", "fixture"]
+    auth: Literal["oauth_subscription", "api_key"]
     allow_api_key_fallback: Literal[False] = False
     model: str
     prompt_version: str
@@ -286,6 +296,20 @@ class LLMConfig(StrictModel):
     screening: dict[str, float]
     queue: dict[str, float]
     local: dict[str, Any] = {}
+    deepseek: DeepSeekConfig = DeepSeekConfig()
+
+    @model_validator(mode="after")
+    def _provider_auth(self) -> LLMConfig:
+        if self.provider == "claude_code_action" and self.auth != "oauth_subscription":
+            raise ValueError("provider claude_code_action requires auth: oauth_subscription")
+        if self.provider == "deepseek" and self.auth != "api_key":
+            raise ValueError("provider deepseek requires auth: api_key (pay-per-use; set it deliberately)")
+        return self
+
+    @property
+    def active_model(self) -> str:
+        """Model id used in cache/job keys and reports for the selected provider."""
+        return self.deepseek.model if self.provider == "deepseek" else self.model
 
 
 class ReportingConfig(StrictModel):
@@ -405,8 +429,6 @@ def _cross_validate(s: Settings) -> None:
     for d in s.scoring.llm_dimensions:
         if not (s.root / d.prompt).exists():  # type: ignore[operator]
             raise ConfigError(f"scoring.yaml: prompt file not found for {d.id}: {d.prompt}")
-    if s.llm.provider == "claude_code_action" and s.llm.auth != "oauth_subscription":
-        raise ConfigError("llm.yaml: claude_code_action must use auth: oauth_subscription")
     for stage in ("scoring", "narrative"):
         if stage not in s.llm.stages:
             raise ConfigError(f"llm.yaml: missing stage {stage!r}")

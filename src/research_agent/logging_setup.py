@@ -8,7 +8,7 @@ import os
 import re
 from pathlib import Path
 
-_SECRET_ENV = ("CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY", "NCBI_API_KEY", "OPENALEX_API_KEY",
+_SECRET_ENV = ("CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY", "NCBI_API_KEY", "OPENALEX_API_KEY", "DEEPSEEK_API_KEY",
                "SEMANTIC_SCHOLAR_API_KEY", "GITHUB_TOKEN", "GH_TOKEN")
 _PATTERNS = [re.compile(r"(api_key|apikey|token|authorization)(=|:\s*)([^\s&\"']+)", re.I),
              re.compile(r"sk-ant-[A-Za-z0-9_\-]+"), re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}")]

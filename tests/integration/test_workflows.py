@@ -45,9 +45,25 @@ def test_claude_only_via_oauth_in_read_only_job():
 
 
 def test_secrets_never_reach_the_claude_steps_env():
+    """Only the DeepSeek steps get a secret in env, and only DEEPSEEK_API_KEY."""
     wf = load("daily_digest.yml")
     for step in wf["jobs"]["analyze"]["steps"]:
-        assert "env" not in step or not any("secrets." in str(v) for v in step["env"].values())
+        secret_env = {k: v for k, v in (step.get("env") or {}).items() if "secrets." in str(v)}
+        if step.get("name", "").startswith("DeepSeek"):
+            assert secret_env == {"DEEPSEEK_API_KEY": "${{ secrets.DEEPSEEK_API_KEY }}"}
+            assert "deepseek" in step["if"]
+        else:
+            assert not secret_env, step.get("name")
+
+
+def test_provider_selects_exactly_one_branch():
+    wf = load("daily_digest.yml")
+    for step in wf["jobs"]["analyze"]["steps"]:
+        name, cond = step.get("name", ""), step.get("if", "")
+        if name.startswith("Claude") or name.startswith("Classify"):
+            assert "provider == 'claude_code_action'" in cond, name
+        if name.startswith("DeepSeek"):
+            assert "provider == 'deepseek'" in cond, name
 
 
 def test_tests_workflow_is_offline():

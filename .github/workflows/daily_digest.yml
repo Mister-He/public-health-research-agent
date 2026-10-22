@@ -161,13 +161,17 @@ jobs:
         with:
           name: scoring-input
           path: analysis/
+      - name: Analysis provider (config/llm.yaml)
+        id: prov
+        run: uv run research-agent ci provider
       - name: Claude arguments (model, turn limit, minimal tools)
         id: args
+        if: ${{ steps.prov.outputs.provider == 'claude_code_action' }}
         run: uv run research-agent ci claude-args --stage scoring
 
       - name: Claude — structured paper assessment
         id: score
-        if: ${{ needs.ingest.outputs.has_work == 'true' }}
+        if: ${{ needs.ingest.outputs.has_work == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         continue-on-error: true
         timeout-minutes: 45
         # Pinned: anthropics/claude-code-action v1.0.245. Review release notes before bumping.
@@ -179,11 +183,18 @@ jobs:
           claude_args: ${{ steps.args.outputs.args }}
           display_report: "false"
       - name: Classify scoring outcome
-        if: ${{ always() && needs.ingest.outputs.has_work == 'true' }}
+        if: ${{ always() && needs.ingest.outputs.has_work == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: >-
           uv run research-agent ci classify --stage scoring
           --outcome "${{ steps.score.outcome }}"
           --execution-file "${{ steps.score.outputs.execution_file }}"
+
+      - name: DeepSeek — structured paper assessment (pay-per-use)
+        if: ${{ needs.ingest.outputs.has_work == 'true' && steps.prov.outputs.provider == 'deepseek' }}
+        timeout-minutes: 45
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: uv run research-agent ci analyze --stage scoring
 
       - name: Prepare narrative / weekly trend manifests (throwaway DB copy)
         id: prepare
@@ -192,11 +203,11 @@ jobs:
 
       - name: Claude arguments (narrative)
         id: nargs
-        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: uv run research-agent ci claude-args --stage narrative
       - name: Claude — daily narrative
         id: narrative
-        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         continue-on-error: true
         timeout-minutes: 15
         uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
@@ -207,19 +218,26 @@ jobs:
           claude_args: ${{ steps.nargs.outputs.args }}
           display_report: "false"
       - name: Classify narrative outcome
-        if: ${{ always() && steps.prepare.outputs.narrative == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: >-
           uv run research-agent ci classify --stage narrative
           --outcome "${{ steps.narrative.outcome }}"
           --execution-file "${{ steps.narrative.outputs.execution_file }}"
 
+      - name: DeepSeek — daily narrative (pay-per-use)
+        if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'deepseek' }}
+        timeout-minutes: 15
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: uv run research-agent ci analyze --stage narrative
+
       - name: Claude arguments (trend discovery)
         id: targs
-        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: uv run research-agent ci claude-args --stage trend_discovery
       - name: Claude — weekly tag proposals
         id: trends
-        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         continue-on-error: true
         timeout-minutes: 20
         uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
@@ -230,11 +248,17 @@ jobs:
           claude_args: ${{ steps.targs.outputs.args }}
           display_report: "false"
       - name: Classify trend-discovery outcome
-        if: ${{ always() && steps.prepare.outputs.trends == 'true' }}
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: >-
           uv run research-agent ci classify --stage trend_discovery
           --outcome "${{ steps.trends.outcome }}"
           --execution-file "${{ steps.trends.outputs.execution_file }}"
+      - name: DeepSeek — weekly tag proposals (pay-per-use)
+        if: ${{ always() && steps.prepare.outputs.trends == 'true' && steps.prov.outputs.provider == 'deepseek' }}
+        timeout-minutes: 15
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: uv run research-agent ci analyze --stage trend_discovery
 
       - uses: actions/upload-artifact@v7
         if: ${{ always() }}

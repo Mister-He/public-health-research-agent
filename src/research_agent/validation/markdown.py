@@ -161,7 +161,7 @@ def check_structure(path: Path, text: str, report_date: date, reports_dir: Path,
     ok("front_matter_timezone", fm.get("timezone") == "Asia/Shanghai", f"timezone {fm.get('timezone')}")
     ok("front_matter_paper_count", fm.get("paper_count") == len(rep.papers) == expected_count,
        f"front matter {fm.get('paper_count')}, sections {len(rep.papers)}, expected {expected_count}")
-    ok("title_heading", rep.title == f"Public Health Research Digest — {report_date.isoformat()}", rep.title)
+    ok("title_heading", rep.title == f"Today Digest - {report_date.isoformat()}", rep.title)
     ok("sections_present", rep.sections[:2] == ["Daily overview", "Recommendations"], f"sections {rep.sections}")
     words = len(rep.overview.split())
     ok("overview_nonempty", words >= 50, f"overview has {words} words")

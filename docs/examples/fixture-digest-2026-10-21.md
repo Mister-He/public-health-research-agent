@@ -16,7 +16,7 @@ run_id: example
 validation_status: passed
 ---
 
-# Public Health Research Digest — 2026-10-21
+# Today Digest - 2026-10-21
 
 ## Daily overview
 

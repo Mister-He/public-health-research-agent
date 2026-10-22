@@ -129,7 +129,7 @@ trend_snapshot_version: t
 validation_status: pending
 ---
 
-# Public Health Research Digest — {REPORT_DATE.isoformat()}
+# Today Digest - {REPORT_DATE.isoformat()}
 
 ## Daily overview
 

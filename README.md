@@ -1,5 +1,7 @@
 # Public Health Research Intelligence Agent
 
+[中文说明](README.zh-CN.md)
+
 An unattended literature monitor for a computational public-health researcher. Every day at
 **06:00 Asia/Shanghai**, it:
 

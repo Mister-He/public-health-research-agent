@@ -1,0 +1,59 @@
+name: Claude auth check
+
+# Verifies that the CLAUDE_CODE_OAUTH_TOKEN secret works: one Claude turn ("Reply OK"),
+# no tools, read-only token. GitHub has no "secret changed" trigger, so this runs only when
+# started — normally by scripts/set_claude_token.sh right after the secret is updated.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claude-auth-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Claude — one-turn auth test
+        id: claude
+        continue-on-error: true
+        timeout-minutes: 5
+        # Same pinned release as the daily pipeline (v1.0.245).
+        uses: anthropics/claude-code-action@6fed3ca145920b639991cb756090506e1bcaf515
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: "Reply with exactly the word OK and nothing else."
+          claude_args: "--max-turns 1 --disallowedTools Bash,Read,Write,Edit,WebFetch,WebSearch,Task"
+          display_report: "false"
+
+      - name: Report result
+        env:
+          EXEC_FILE: ${{ steps.claude.outputs.execution_file }}
+          OUTCOME: ${{ steps.claude.outcome }}
+        run: |
+          set -uo pipefail
+          if [ -z "${EXEC_FILE}" ] || [ ! -f "${EXEC_FILE}" ]; then
+            echo "::error title=Claude auth check failed::The action produced no execution log (outcome: ${OUTCOME}). Is the CLAUDE_CODE_OAUTH_TOKEN secret set?"
+            exit 1
+          fi
+          is_error=$(jq -r '[.[] | select(.type=="result")] | last | .is_error // true' "${EXEC_FILE}")
+          # Only the first line of the result is printed (an error message, or "OK").
+          msg=$(jq -r '[.[] | select(.type=="result")] | last | (.result // .subtype // "no result") | tostring' "${EXEC_FILE}" | head -n 1 | cut -c1-240)
+          if [ "${is_error}" = "false" ] && [ "${OUTCOME}" = "success" ]; then
+            echo "Claude OAuth token works. Reply: ${msg}"
+            echo "### ✅ Claude OAuth token works" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error title=Claude auth check failed::${msg} — regenerate with 'claude setup-token' and run scripts/set_claude_token.sh"
+            echo "### ❌ Claude OAuth token failed: ${msg}" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

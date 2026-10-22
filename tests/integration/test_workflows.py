@@ -55,3 +55,18 @@ def test_tests_workflow_is_offline():
     assert wf["permissions"] == {"contents": "read"}
     run = " ".join(s.get("run", "") for s in wf["jobs"]["test"]["steps"])
     assert "pytest" in run and "-m live" not in run
+
+
+def test_auth_check_is_manual_minimal_and_oauth_only():
+    wf = load("claude-auth-check.yml")
+    assert set(wf["on"]) == {"workflow_dispatch"}                 # never scheduled / on push
+    assert wf["permissions"] == {"contents": "read"}
+    text = (WF / "claude-auth-check.yml").read_text()
+    assert "anthropic_api_key" not in text and "ANTHROPIC_API_KEY" not in text
+    steps = wf["jobs"]["check"]["steps"]
+    assert steps[0]["with"]["persist-credentials"] is False
+    claude = next(s for s in steps if s.get("uses", "").startswith("anthropics/claude-code-action@"))
+    daily = next(s for s in load("daily_digest.yml")["jobs"]["analyze"]["steps"]
+                 if s.get("uses", "").startswith("anthropics/claude-code-action@"))
+    assert claude["uses"] == daily["uses"]                         # same pinned release
+    assert "--max-turns 1" in claude["with"]["claude_args"] and "Bash" in claude["with"]["claude_args"]

@@ -30,11 +30,16 @@ On a machine where you are logged in to Claude Code with an eligible Pro/Max sub
 claude setup-token
 ```
 
-Copy the printed token and store it as a repository **secret** — never in a file, issue or log:
+Store it as a repository **secret** and verify it in one step — never in a file, issue or log:
 
 ```bash
-gh secret set CLAUDE_CODE_OAUTH_TOKEN          # paste the token when prompted
+scripts/set_claude_token.sh                    # paste the token (hidden); sets the secret, then
+                                               # runs the "Claude auth check" workflow and waits
 ```
+
+The check makes one Claude turn ("Reply OK") with no tools and prints ✅ or the exact error.
+GitHub has no "secret changed" trigger, so always change the token through this script (or start
+*Actions → Claude auth check → Run workflow* by hand after `gh secret set CLAUDE_CODE_OAUTH_TOKEN`).
 
 Do **not** create `ANTHROPIC_API_KEY`; the workflow refuses to run if that secret exists, so
 pay-as-you-go billing can never be used by accident. Re-run `claude setup-token` and update the

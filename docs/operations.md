@@ -19,7 +19,7 @@ show a red annotation with the error and a fix hint on the run page. Categories:
 
 | Category | Typical cause | Effect | Action |
 |---|---|---|---|
-| `auth` | OAuth token expired/revoked (`OAuth token has expired`, 401) | jobs kept, retried after `quota_retry_hours` (20 h) | run `claude setup-token`, update secret `CLAUDE_CODE_OAUTH_TOKEN`; retries alone cannot fix a revoked token |
+| `auth` | OAuth token expired/revoked/mis-pasted (`Invalid API key`, `OAuth token has expired`, 401) | jobs kept, retried after `quota_retry_hours` (20 h) | `claude setup-token`, then `scripts/set_claude_token.sh` (updates the secret and runs the auth check); retries alone cannot fix a revoked token |
 | `quota` | subscription usage limit reached (shared with your other Claude Code use) | jobs kept, retried next run; `llm_usage.subscription_limit_event = 1` | wait, or lower `llm.stages.scoring.max_papers_per_run` |
 | `max_turns` | turn budget too small for the batch count | partial outputs imported; rest retried | raise `max_turns` or lower `batch_size` × papers |
 | `timeout` / `action_failure` | step timeout, runner problem, action error | jobs kept, exponential backoff | check the action log |

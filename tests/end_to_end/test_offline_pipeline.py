@@ -174,3 +174,22 @@ def test_bad_model_output_is_rejected_not_coerced(db, settings, bad):
     assert sum(imp.failed.values()) == n_first
     assert imp.completed == m["paper_count"] - n_first
     assert db.scalar("SELECT COUNT(*) FROM analysis_jobs WHERE status='retryable_failed' AND format_failures=1") == n_first
+
+
+def test_currency_dollars_in_abstracts_are_escaped_and_still_verbatim(db, settings):
+    abstract = ("SYNTHETIC TEST RECORD, not a real publication. A microsimulation model of lung cancer screening "
+                "found an ICER of $1,200 per QALY versus $3,400 under usual care (US$ 5 million budget); "
+                "the calibration rate $\\alpha$ was estimated with Bayesian calibration.")
+    recs = [r.model_copy(update={"abstract": abstract}) if r.source_record_id == "fx-0001" else r for r in records()]
+    ids = {ingest_record(db, r, run_id=RUN).paper_id for r in recs}
+    prescreen(db, settings, sorted(ids))
+    shortlist_and_enqueue(db, settings, REPORT_DATE)
+    cca.build_scoring_manifest(db, settings, run_id=RUN, report_date=REPORT_DATE)
+    simulate_scoring(settings)
+    cca.write_status(settings, cca.ActionStatus(stage="scoring", outcome="success"))
+    res = publish_stage(db, settings, REPORT_DATE, run_id=RUN, online=False)
+    assert res.status == "published", res.summary
+    text = res.report_path.read_text()
+    assert r"ICER of \$1,200 per QALY versus \$3,400" in text and r"US\$ 5 million" in text
+    assert r"$\alpha$" in text and r"\$\alpha" not in text          # LaTeX math left as is
+    assert run_gate(db, settings, REPORT_DATE, res.report_path, text).passed   # still verbatim vs. the source

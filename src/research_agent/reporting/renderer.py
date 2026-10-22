@@ -14,7 +14,7 @@ from research_agent.llm.claude_code_action import selection_hash
 from research_agent.llm.structured_output import PaperEvaluation
 from research_agent.metadata.schemas import Paper
 from research_agent.reporting.markdown import (ABSTRACT_UNAVAILABLE, UNAVAILABLE, blockquote, cell,
-                                               fallback_overview, fmt)
+                                               escape_currency, fallback_overview, fmt)
 from research_agent.settings import PIPELINE_VERSION, Settings
 from research_agent.storage.database import Database
 from research_agent.storage.repositories import load_paper
@@ -98,7 +98,7 @@ def _abstract(p: Paper, settings: Settings) -> tuple[str, str]:
         return " *(not reproduced under the configured licence policy)*", \
             f"Abstract not reproduced; see the official abstract at <{p.canonical_url}>."
     src = SOURCE_LABEL.get(p.abstract_source or "", p.abstract_source or "unknown source")
-    return f" *(original abstract, verbatim from {src})*", blockquote(p.abstract)
+    return f" *(original abstract, verbatim from {src})*", blockquote(escape_currency(p.abstract))
 
 
 def _date_cell(p: Paper) -> str:

@@ -16,6 +16,14 @@ def cell(text: str | None) -> str:
 
 
 _BLOCK_MARKER = re.compile(r"^(\s*)([#>+\-*=]|\d+[.)])")
+# A dollar sign followed by an amount ("$1,200", "$ 5 million", "US$500") is currency. Unescaped,
+# GitHub would render the text between two such signs as math; LaTeX like "$\alpha$" is untouched.
+_CURRENCY_DOLLAR = re.compile(r"(?<!\\)\$(?=\s?\d)")
+
+
+def escape_currency(text: str) -> str:
+    return _CURRENCY_DOLLAR.sub(r"\\$", text)
+
 
 
 def blockquote(text: str) -> str:

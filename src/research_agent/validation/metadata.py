@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 from research_agent.ingestion.http import ProviderError
 from research_agent.metadata.normalization import normalize_title
 from research_agent.metadata.schemas import Paper
-from research_agent.reporting.markdown import ABSTRACT_UNAVAILABLE
+from research_agent.reporting.markdown import ABSTRACT_UNAVAILABLE, escape_currency
 from research_agent.reporting.renderer import paper_view
 from research_agent.storage.database import Database
 from research_agent.storage.repositories import source_records_for
@@ -47,8 +47,11 @@ def check_rendered_fields(pp: ParsedPaper, paper: Paper, expected_view: dict, re
     ok("mesh_match_record", pp.labels.get("MeSH terms", "").lstrip(":").strip() == expected_view["mesh_cell"],
        "MeSH terms differ from the verified record")
     if paper.abstract:
+        # The renderer escapes currency dollars ("$1,200" -> "\\$1,200") so Markdown does not render
+        # them as math; compare against the same deterministic escaping of the stored original.
         shown = _ws(unescape_md(pp.abstract))
-        ok("abstract_verbatim", shown == _ws(paper.abstract) or pp.abstract.startswith("Abstract not reproduced"),
+        ok("abstract_verbatim", shown == _ws(escape_currency(paper.abstract))
+           or pp.abstract.startswith("Abstract not reproduced"),
            "rendered abstract differs from the stored original abstract")
     else:
         ok("abstract_unavailable_marker", pp.abstract.strip() == ABSTRACT_UNAVAILABLE,

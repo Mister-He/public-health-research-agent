@@ -424,6 +424,11 @@ def cmd_ci(s: Settings, args) -> int:
     if a == "classify":
         st = cca.classify_execution(args.stage, args.outcome, Path(args.execution_file) if args.execution_file else None)
         cca.write_status(s, st)
+        if st.category and os.environ.get("GITHUB_ACTIONS") == "true":
+            hint = {"auth": "regenerate the token with `claude setup-token` and update secret CLAUDE_CODE_OAUTH_TOKEN",
+                    "quota": "subscription usage limit reached; work stays queued and is retried next run"}.get(st.category, "")
+            print(f"::error title=Claude {args.stage}: {st.category}::{st.error_message or st.detail}"
+                  + (f" — {hint}" if hint else ""))
         _gh_output(category=st.category or "none")
         _print(st.to_json())
         return 0

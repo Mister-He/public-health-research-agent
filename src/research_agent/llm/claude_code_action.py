@@ -157,6 +157,7 @@ class ActionStatus:
     reported_cost_usd: float | None = None
     subscription_limit_event: bool = False
     detail: str = ""
+    error_message: str | None = None       # first line of an ERROR result only, redacted
     extra: dict = field(default_factory=dict)
 
     def to_json(self) -> dict:
@@ -202,9 +203,24 @@ def classify_execution(stage: str, outcome: str, execution_file: Path | None) ->
     else:
         st.category = "action_failure"
     st.detail = (st.detail or (result or {}).get("subtype") or outcome or "")[:120]
+    st.error_message = error_message(result)
     if st.outcome == "success":
         st.outcome = "failure"
     return st
+
+
+def error_message(result: dict | None, limit: int = 240) -> str | None:
+    """First line of the result text, ONLY for error results (e.g. "Invalid API key · Please run
+    /login"), redacted and truncated. Successful output is never copied into status files."""
+    if not result or not result.get("is_error"):
+        return None
+    from research_agent.logging_setup import redact
+
+    text = result.get("result") or result.get("error") or ""
+    if not isinstance(text, str):
+        text = json.dumps(text)
+    line = next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
+    return redact(line)[:limit] or None
 
 
 def write_status(settings: Settings, st: ActionStatus) -> Path:

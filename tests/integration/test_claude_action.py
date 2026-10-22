@@ -140,3 +140,27 @@ def test_interrupted_action_recovery_and_no_reenqueue(db, settings):
     n_jobs = db.scalar("SELECT COUNT(*) FROM analysis_jobs")
     shortlist_and_enqueue(db, settings, REPORT_DATE)                     # re-discovery does not duplicate jobs
     assert db.scalar("SELECT COUNT(*) FROM analysis_jobs") == n_jobs
+
+
+def test_error_message_is_kept_for_errors_only_and_redacted(tmp_path, monkeypatch):
+    monkeypatch.setenv("CLAUDE_CODE_OAUTH_TOKEN", "sk-ant-oat01-SECRETVALUE123456")
+    st = cca.classify_execution("scoring", "failure", exec_file(tmp_path, [{
+        "type": "result", "subtype": "success", "is_error": True,
+        "result": "Invalid API key · Please run /login (token sk-ant-oat01-SECRETVALUE123456)\nsecond line"}]))
+    assert st.category == "auth"
+    assert st.error_message.startswith("Invalid API key · Please run /login")
+    assert "SECRETVALUE" not in st.error_message and "second line" not in st.error_message
+    ok = cca.classify_execution("scoring", "success", exec_file(tmp_path, [{
+        "type": "result", "subtype": "success", "is_error": False, "result": "Paper text summary that must not leak"}]))
+    assert ok.error_message is None
+
+
+def test_classify_cli_prints_actionable_annotation(project, tmp_path, monkeypatch, capsys):
+    from research_agent.cli import main
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    f = exec_file(tmp_path, [{"type": "result", "subtype": "success", "is_error": True,
+                              "result": "OAuth token has expired. Please obtain a new token."}])
+    assert main(["--root", str(project), "ci", "classify", "--stage", "scoring", "--outcome", "failure",
+                 "--execution-file", str(f)]) == 0
+    out = capsys.readouterr().out
+    assert "::error title=Claude scoring: auth::OAuth token has expired" in out and "claude setup-token" in out

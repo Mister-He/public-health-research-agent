@@ -14,7 +14,8 @@
 ## Claude failures (analysis job)
 
 The *Classify … outcome* steps write `analysis/output/<stage>_status.json` (category, token counts,
-turns — never message content). Categories:
+turns, and for failures the first line of the error message, redacted — never normal output) and
+show a red annotation with the error and a fix hint on the run page. Categories:
 
 | Category | Typical cause | Effect | Action |
 |---|---|---|---|

@@ -1,7 +1,7 @@
 {
  "format": "research-agent-ndjson-v1",
  "rows_per_bucket": 500,
- "schema_version": 2,
+ "schema_version": 3,
  "tables": {
   "analysis_jobs": [
    "id",
@@ -102,6 +102,17 @@
    "started_at",
    "finished_at",
    "error"
+  ],
+  "journal_metrics": [
+   "issn",
+   "found",
+   "openalex_source_id",
+   "display_name",
+   "two_year_mean_citedness",
+   "h_index",
+   "is_in_doaj",
+   "source_type",
+   "retrieved_at"
   ],
   "llm_usage": [
    "id",

@@ -164,7 +164,11 @@ def check_grounding(ev: PaperEvaluation, record: dict, *, llm_dimensions: list[s
             rep.warnings.append(f"{dim_id}: dropped {dropped} evidence quote(s) not found in the record")
         d.evidence = kept
         if not kept and d.confidence > 0.4:
-            rep.errors.append(f"{dim_id}: no grounded evidence but confidence {d.confidence}")
+            if dropped:     # every quote was fabricated: reject
+                rep.errors.append(f"{dim_id}: no grounded evidence but confidence {d.confidence}")
+            else:           # no quote offered (common for interpretive dimensions): cap, don't reject
+                rep.warnings.append(f"{dim_id}: confidence {d.confidence} capped to 0.4 (no evidence quoted)")
+                d.confidence = 0.4
         if not has_abstract and d.confidence > 0.5:
             rep.errors.append(f"{dim_id}: confidence {d.confidence} without an abstract")
 

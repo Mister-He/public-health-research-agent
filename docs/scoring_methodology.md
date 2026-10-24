@@ -65,7 +65,8 @@ external context / speculation / missing information.
 ## Grounding checks (rejection, not coercion)
 
 - every evidence quote must occur in the supplied record (normalized); unfound quotes are dropped,
-  and a dimension with no grounded evidence and confidence > 0.4 rejects the evaluation;
+  and a dimension whose quotes were all unfound with confidence > 0.4 rejects the evaluation;
+- a dimension that quotes no evidence at all has its confidence capped at 0.4 (warning, not rejection);
 - any number in interpretive text that does not occur in the record rejects the evaluation;
 - confidence > 0.5 without an abstract rejects the evaluation;
 - unknown tag ids are dropped; `canonical_id` and `metadata_version` must match the job.

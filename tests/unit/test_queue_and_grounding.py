@@ -96,6 +96,13 @@ def test_grounding_accepts_verbatim_quotes():
     assert rep.ok, rep.errors
 
 
+def test_grounding_caps_confidence_when_no_evidence_quoted():
+    ev, rep = check_grounding(_ev(evidence=(), conf=0.6), RECORD,
+                              llm_dimensions=["research_alignment", "methodological_innovation"], taxonomy_ids=set())
+    assert rep.ok, rep.errors
+    assert all(d.confidence == 0.4 for d in ev.dimensions.values())
+
+
 def test_grounding_rejects_fabricated_evidence_and_numbers():
     _, rep = check_grounding(_ev(evidence=("validated in 14 countries",)), RECORD,
                              llm_dimensions=["research_alignment", "methodological_innovation"], taxonomy_ids=set())

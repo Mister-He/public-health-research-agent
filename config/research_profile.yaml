@@ -2,7 +2,7 @@
 # Edit freely. `importance` is relative (0-1); `kind` is core | exploratory.
 # Keywords are matched as phrases (case-insensitive, hyphen/space tolerant);
 # they also seed provider queries (see search_queries.yaml).
-profile_version: "1.0"
+profile_version: "1.1"
 owner: "Mister He"
 
 topics:
@@ -47,7 +47,7 @@ topics:
   - id: causal_inference
     name: Causal inference and statistical learning for health
     kind: core
-    importance: 0.75
+    importance: 0.5
     description: >
       Causal inference, target trial emulation, survival modelling and statistical learning
       for population health questions.
@@ -59,7 +59,7 @@ topics:
   - id: health_economics
     name: Health economic evaluation and HTA
     kind: core
-    importance: 1.0
+    importance: 0.8
     description: >
       Cost-effectiveness, cost-utility, budget impact, distributional cost-effectiveness
       analysis and health technology assessment.
@@ -72,7 +72,7 @@ topics:
   - id: policy_optimization
     name: Public health policy optimization and resource allocation
     kind: core
-    importance: 0.95
+    importance: 0.8
     description: >
       Intervention prioritization, resource allocation, screening optimization, adaptive and
       risk-stratified intervention strategies and evidence-based decision-making.
@@ -86,7 +86,7 @@ topics:
   - id: cancer_control
     name: Cancer screening, prevention and control
     kind: core
-    importance: 0.8
+    importance: 0.6
     description: Lung, liver and prostate cancer screening, prevention and control.
     keywords: [cancer screening, lung cancer screening, low-dose computed tomography, LDCT,
       liver cancer, hepatocellular carcinoma, prostate cancer screening, PSA screening,
@@ -97,7 +97,7 @@ topics:
   - id: tobacco_control
     name: Smoking and tobacco control
     kind: core
-    importance: 0.75
+    importance: 0.6
     description: Smoking cessation, tobacco control policy and its modelling.
     keywords: [tobacco control, smoking cessation, smoking prevalence, tobacco policy, e-cigarette, vaping]
     mesh_terms: ["Tobacco Use Cessation", "Smoking Prevention"]
@@ -106,7 +106,7 @@ topics:
   - id: hcv_infectious
     name: Hepatitis C and infectious disease elimination
     kind: core
-    importance: 0.8
+    importance: 0.6
     description: >
       Hepatitis C and other infectious diseases, elimination modelling, transmission in
       high-risk populations including people who inject drugs and incarcerated populations.
@@ -116,16 +116,21 @@ topics:
     mesh_terms: ["Hepatitis C", "Prisons", "Communicable Diseases"]
     application_domain: true
 
-  # --- Exploratory ---
+  # --- AI-empowered modelling (core focus, with microsimulation) ---
   - id: ai_ml_health
-    name: AI and machine learning for health modelling
-    kind: exploratory
-    importance: 0.6
-    description: Machine learning used to build, accelerate or replace health/decision models.
+    name: AI-empowered modelling and simulation methods
+    kind: core
+    importance: 1.0
+    description: >
+      AI and machine learning used to build, calibrate, accelerate, emulate or optimize
+      microsimulation, agent-based, transmission or decision models.
     keywords: [machine learning, deep learning, AI-assisted simulation, surrogate model,
-      neural network emulator, machine learning for decision-making]
+      neural network emulator, machine learning for decision-making, metamodel, metamodelling,
+      machine learning calibration, physics-informed neural network, AI-assisted modelling,
+      AI-assisted modeling, LLM-assisted modelling, deep reinforcement learning]
     exclude: [image segmentation, radiomics]
 
+  # --- Exploratory (generic AI not tied to modelling) ---
   - id: llm_rag_kg
     name: Generative AI, LLMs, RAG and knowledge graphs
     kind: exploratory
@@ -150,7 +155,7 @@ topics:
     importance: 0.45
     description: Agentic workflows, autonomous research assistants, AI-assisted mathematical modelling.
     keywords: [AI agent, agentic workflow, autonomous agent, multi-agent system, AI scientist,
-      AI-assisted modelling, AI-assisted modeling, AI-driven policy optimization]
+      AI-driven policy optimization]
 
 # Terms that disqualify a record from screening regardless of other matches.
 global_exclusions: [erratum, corrigendum, retraction notice, "correction to"]

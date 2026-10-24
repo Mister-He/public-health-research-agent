@@ -34,6 +34,15 @@ groups:
     mesh: ["Cost-Benefit Analysis"]
     mesh_anchor: ["Models, Economic", "Models, Theoretical", "Computer Simulation", "Decision Support Techniques"]
 
+  - id: ai_modelling
+    providers: [pubmed, europe_pmc, openalex]
+    terms: [surrogate model, emulator, metamodel, machine learning calibration, neural network,
+      deep learning, physics-informed neural network, reinforcement learning, large language model,
+      AI-assisted modelling, AI-assisted modeling]
+    # Generic AI terms: require a simulation/decision-model context term.
+    context: [microsimulation, agent-based, individual-based, transmission model, simulation model,
+      decision model, decision-analytic, cost-effectiveness, epidemiological model]
+
   - id: ai_exploratory
     providers: [pubmed, europe_pmc, openalex]
     terms: [reinforcement learning, Markov decision process, generative AI, large language model,

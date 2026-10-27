@@ -272,7 +272,7 @@ class TrendsFile(StrictModel):
 
 class RankingConfig(StrictModel):
     max_recommendations: int = Field(default=10, ge=1, le=50)
-    min_verified_papers: int = Field(default=3, ge=1)
+    min_verified_papers: int = Field(default=2, ge=1)
     publication_horizon_days: int = 30
     core_relevance_threshold: float = 55
     exploratory_relevance_threshold: float = 60

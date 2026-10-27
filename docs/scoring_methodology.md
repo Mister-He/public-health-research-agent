@@ -83,7 +83,7 @@ Selection is greedy: adjusted = raw − λ·100·max-Jaccard(tags, already selec
 diversity can reorder near-ties only). At most 2 exploratory papers and a core majority. Papers are
 then **presented in raw-score order** (ties: newer first, then canonical id); raw score, raw rank,
 adjusted score, diversity penalty and selection step are all stored. Fewer than 10 eligible papers
-⇒ fewer recommendations; fewer than 3 ⇒ no digest.
+⇒ fewer recommendations; fewer than 2 ⇒ no digest.
 
 ## Versioning and caching
 

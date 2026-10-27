@@ -25,7 +25,7 @@ every run and report.
 | Maximum candidate age (recommendation horizon) | 30 days | `ranking.publication_horizon_days` |
 | Core / exploratory relevance threshold | 55 / 60 | `ranking.*_relevance_threshold` |
 | Maximum exploratory selections | 2 | `ranking.max_exploratory` |
-| Minimum verified papers to publish | 3 | `ranking.min_verified_papers` |
+| Minimum verified papers to publish | 2 | `ranking.min_verified_papers` |
 | Minimum metadata completeness | 0.5 | `ranking.min_metadata_completeness` |
 | Daily Claude workload | ≤ 40 papers, batches of 8, 30 turns | `llm.stages.scoring` |
 | Maximum daily API cost | no paid API is used; Claude usage counts against the subscription and is bounded by the workload/turn limits above | `llm.yaml` |

@@ -27,6 +27,6 @@ next eligible candidates; (5) the digest is re-rendered and re-validated — at 
 `max_repair_rounds` (3) times. After a refill the Claude narrative no longer matches the selection,
 so the clearly labelled structural overview is used instead.
 
-If fewer than `min_verified_papers` (3) remain, no digest is published. Only a fully passing
+If fewer than `min_verified_papers` (2) remain, no digest is published. Only a fully passing
 artifact is promoted (atomic rename from `reports/.staging/`), marked `validation_status: passed`,
 and committed. Every check result is stored in `validation_results` with the run id and round.

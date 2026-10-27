@@ -1,7 +1,7 @@
 ranking:
   max_recommendations: 10
   # Minimum verified papers required to publish a (shorter) digest at all.
-  min_verified_papers: 3
+  min_verified_papers: 2
   # Publication horizon: papers whose verified first-publication date is older are ineligible.
   publication_horizon_days: 30
   # Hard eligibility: research_alignment score must reach this (0-100).

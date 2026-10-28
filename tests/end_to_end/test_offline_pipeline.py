@@ -91,7 +91,7 @@ def test_gate_blocks_corrupted_artifacts(db, settings):
         .replace(f"date: {REPORT_DATE.isoformat()}", "date: 2026-01-01", 1),
         "broken front matter": good.replace("---\n", "---\n: : bad: [\n", 1),
         "missing section": re.sub(r"\*\*MeSH terms:\*\*[^\n]*\n", "", good, count=1),
-        "placeholder": good.replace("## Daily overview\n", "## Daily overview\n\n{{ narrative }}\n", 1),
+        "placeholder": good.replace("## Weekly overview\n", "## Weekly overview\n\n{{ narrative }}\n", 1),
         "fabricated citation": good.replace("## Methodology and coverage",
                                             "### 11. Invented paper\n\n| Field | Value |\n|---|---|\n| Canonical ID | `doi:10.9999/fake` |\n\n## Methodology and coverage", 1),
         "duplicate section": good.replace("## Methodology and coverage",
@@ -193,3 +193,4 @@ def test_currency_dollars_in_abstracts_are_escaped_and_still_verbatim(db, settin
     assert r"ICER of \$1,200 per QALY versus \$3,400" in text and r"US\$ 5 million" in text
     assert r"$\alpha$" in text and r"\$\alpha" not in text          # LaTeX math left as is
     assert run_gate(db, settings, REPORT_DATE, res.report_path, text).passed   # still verbatim vs. the source
+

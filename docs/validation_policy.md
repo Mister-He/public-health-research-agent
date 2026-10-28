@@ -7,7 +7,7 @@ independently. It is fail-closed for factual integrity.
 |---|---|---|
 | File | `YYYY-MM-DD.md`, Asia/Shanghai date, `reports/` directory | block report |
 | Front matter | valid YAML, required keys, date, timezone, paper_count = sections = selections | block report |
-| Structure | title, Daily overview + Recommendations sections, overview ≥ 50 words and prose (no lists, checked on the token stream), no template placeholders or `None`/`nan` leaks, sequential positions, unique ids, no duplicate sections, all required fields/labels, complete score tables, URL/DOI cell formats | block report |
+| Structure | title (`Weekly Digest - YYYY-MM-DD`; legacy `Today Digest` accepted), Weekly overview (legacy: Daily overview) + Recommendations sections, overview ≥ 50 words and prose (no lists, checked on the token stream), no template placeholders or `None`/`nan` leaks, sequential positions, unique ids, no duplicate sections, all required fields/labels, complete score tables, URL/DOI cell formats | block report |
 | Citations | every paper section corresponds to a persisted selection (no fabricated citations) | block report |
 | Rendered metadata | title, authors, venue, dates, DOI, PMID, URL, preprint status, keywords, MeSH exactly as in the canonical record; abstract verbatim (or the exact unavailable marker); displayed score = stored score | block paper |
 | Provenance | title/abstract/authors/journal found verbatim in the stored record of the recorded source; DOI/PMID present in some stored record | block paper |

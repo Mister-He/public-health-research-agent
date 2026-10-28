@@ -2,9 +2,9 @@
 {{ front_matter }}
 ---
 
-# Today Digest - {{ date }}
+# Weekly Digest - {{ date }}
 
-## Daily overview
+## Weekly overview
 
 {{ narrative }}
 
@@ -12,7 +12,7 @@
 
 ## Recommendations
 {% if papers|length < max_recommendations %}
-> **Coverage note:** {{ papers|length }} paper{{ '' if papers|length == 1 else 's' }} met the eligibility and verification rules today (maximum {{ max_recommendations }}). The list is not padded with stale or weakly related papers.
+> **Coverage note:** {{ papers|length }} paper{{ '' if papers|length == 1 else 's' }} met the eligibility and verification rules this week (maximum {{ max_recommendations }}). The list is not padded with stale or weakly related papers.
 {% endif %}
 {% for p in papers %}
 ### {{ p.position }}. {{ p.title }}

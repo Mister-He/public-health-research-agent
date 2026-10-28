@@ -129,9 +129,9 @@ trend_snapshot_version: t
 validation_status: pending
 ---
 
-# Today Digest - {REPORT_DATE.isoformat()}
+# Weekly Digest - {REPORT_DATE.isoformat()}
 
-## Daily overview
+## Weekly overview
 
 {"word " * 160}
 
@@ -197,7 +197,7 @@ def test_markdown_good_fixture_passes(settings):
     (lambda t: t.replace("**MeSH terms:** No MeSH terms in verified sources\n", ""), {"label:MeSH terms"}),
     (lambda t: t.replace(ABSTRACT_UNAVAILABLE, ""), {"abstract_present_or_marked"}),
     (lambda t: t.replace("| URL | <https://doi.org/", "| URL | <http//doi.org/"), {"url_format"}),
-    (lambda t: t.replace("{{", "").replace("Daily overview\n\n", "Daily overview\n\n{{ narrative }} "), {"no_placeholders"}),
+    (lambda t: t.replace("{{", "").replace("Weekly overview\n\n", "Weekly overview\n\n{{ narrative }} "), {"no_placeholders"}),
     (lambda t: t.replace("| Research alignment | 0.30", "| Freshness | 0.30"), {"score_breakdown_complete"}),
     (lambda t: t.replace("word " * 160, "- a\n- b\n"), {"overview_nonempty", "overview_is_prose"}),
     (lambda t: t.replace("Not available from verified sources", "None"), {"no_placeholders"}),

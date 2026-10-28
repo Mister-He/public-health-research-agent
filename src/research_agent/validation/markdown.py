@@ -19,6 +19,8 @@ FIELD_ROWS = ["Canonical ID", "Rank", "Authors", "Journal / server", "Publicatio
 PLACEHOLDERS = re.compile(r"\{\{|\}\}|\{%|%\}|\bTODO\b|\bTBD\b|<placeholder>", re.I)
 PY_LEAKS = re.compile(r"\bNone\b|\bnan\b|\bundefined\b|\bNaN\b")      # case-sensitive value leaks
 FILENAME = re.compile(r"^\d{4}-\d{2}-\d{2}\.md$")
+TITLES = ("Weekly Digest", "Today Digest")                       # current, legacy (daily reports)
+OVERVIEW_SECTIONS = ("Weekly overview", "Daily overview")
 
 
 @dataclass
@@ -86,7 +88,7 @@ def parse(text: str) -> ParsedReport:
                 rep.papers.append(paper)
             i += 3
             continue
-        if t.type in ("bullet_list_open", "ordered_list_open") and section == "Daily overview":
+        if t.type in ("bullet_list_open", "ordered_list_open") and section in OVERVIEW_SECTIONS:
             rep.overview_has_list = True
         if t.type == "table_open":
             rows, i = _table(tokens, i)
@@ -108,7 +110,7 @@ def parse(text: str) -> ParsedReport:
             i = j + 1
             continue
         if t.type == "inline":
-            if section == "Daily overview" and paper is None and tokens[i - 1].type == "paragraph_open":
+            if section in OVERVIEW_SECTIONS and paper is None and tokens[i - 1].type == "paragraph_open":
                 if not (t.content.startswith("*") and t.content.endswith("*")):
                     rep.overview += (" " if rep.overview else "") + t.content
             if paper is not None:
@@ -161,8 +163,9 @@ def check_structure(path: Path, text: str, report_date: date, reports_dir: Path,
     ok("front_matter_timezone", fm.get("timezone") == "Asia/Shanghai", f"timezone {fm.get('timezone')}")
     ok("front_matter_paper_count", fm.get("paper_count") == len(rep.papers) == expected_count,
        f"front matter {fm.get('paper_count')}, sections {len(rep.papers)}, expected {expected_count}")
-    ok("title_heading", rep.title == f"Today Digest - {report_date.isoformat()}", rep.title)
-    ok("sections_present", rep.sections[:2] == ["Daily overview", "Recommendations"], f"sections {rep.sections}")
+    ok("title_heading", rep.title in {f"{t} - {report_date.isoformat()}" for t in TITLES}, rep.title)
+    ok("sections_present", len(rep.sections) >= 2 and rep.sections[0] in OVERVIEW_SECTIONS
+       and rep.sections[1] == "Recommendations", f"sections {rep.sections}")
     words = len(rep.overview.split())
     ok("overview_nonempty", words >= 50, f"overview has {words} words")
     ok("overview_is_prose", not rep.overview_has_list, "overview contains a list")

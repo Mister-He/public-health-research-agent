@@ -115,13 +115,13 @@ def simulate_narrative(settings: Settings) -> Path:
     domains = sorted({d for p in m["papers"] for d in p.get("research_domains", [])})
     text = (
         f"{LABEL} This simulated overview was produced by the offline fixture provider rather than by Claude, "
-        "so it only restates structured fields of today's selection. The selected set is drawn from the configured "
+        "so it only restates structured fields of this week's selection. The selected set is drawn from the configured "
         "research profile, with research domains spanning "
         f"{', '.join(domains) or 'no specific domain'}, and the matched trend tags include "
         f"{', '.join(themes) or 'none of the tracked tags'}. Methodologically, the set mixes simulation and "
         "decision-analytic modelling with statistical and economic evaluation, which is consistent with the profile's "
         "emphasis on model-based public health decision-making. Cross-disciplinary content is limited to what the "
-        "lexical screen detected, and no claim is made here about field-wide changes, because a small daily selection "
+        "lexical screen detected, and no claim is made here about field-wide changes, because a small weekly selection "
         "cannot support such conclusions. In a production run this paragraph is written by Claude from the same "
         "manifest and must pass the same validation: prose only, no per-paper enumeration, no numbers absent from the "
         "manifest, and a word count within the configured range. Readers should treat this fixture paragraph purely as "

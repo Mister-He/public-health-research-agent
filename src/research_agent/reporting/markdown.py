@@ -63,7 +63,7 @@ def fallback_overview(papers: list[dict], snapshot_tags: dict[str, dict], tag_na
     tag_list = ", ".join(tag_names.get(t, t) for t, _ in sorted(tags.items(), key=lambda kv: (-kv[1], kv[0]))[:4]) or "none"
     return (
         "This overview was generated automatically from structured fields because the AI narrative synthesis was "
-        "unavailable for this run, so it describes the composition of today's selection rather than interpreting it. "
+        "unavailable for this run, so it describes the composition of this week's selection rather than interpreting it. "
         f"Today's selection contains {n} paper{'s' if n != 1 else ''}, of which {preprints} "
         f"{'is a preprint' if preprints == 1 else 'are preprints'} that have not completed peer review. "
         f"By research domain, as classified by the AI assessment, the most represented areas are {top(domains)}. "

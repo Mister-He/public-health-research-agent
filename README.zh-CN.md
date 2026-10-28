@@ -1,8 +1,8 @@
 # 公共卫生研究情报助手
 
-[English](README.md) · [示例日报](docs/examples/fixture-digest-2026-10-21.md) · [架构说明](docs/architecture.md) · [公开前风险审查](docs/public-release-review.zh-CN.md)
+[English](README.md) · [示例周报](docs/examples/fixture-digest-2026-10-21.md) · [架构说明](docs/architecture.md) · [公开前风险审查](docs/public-release-review.zh-CN.md)
 
-为计算公共卫生研究者持续检索、筛选和评估学术文献，生成可追溯、经过校验的 Markdown 日报。默认通过 GitHub Actions 在每天 **06:00（Asia/Shanghai，UTC+8）**运行；实际启动时间可能受 GitHub 调度延迟影响。
+为计算公共卫生研究者持续检索、筛选和评估学术文献，生成可追溯、经过校验的 Markdown 周报。默认通过 GitHub Actions 在每天 **06:00（Asia/Shanghai，UTC+8）**运行，每天检索和评估新文献，每周一（`reporting.digest_weekday`）从本周评估过的论文中发布一份周报；实际启动时间可能受 GitHub 调度延迟影响。
 
 当前研究画像涵盖生物统计、流行病学建模、微观模拟、传染病传播模型、卫生经济学、公共卫生政策，以及可迁移到这些领域的 AI 方法。研究主题、期刊和评分规则均可配置。
 
@@ -13,9 +13,9 @@
 3. **预筛选与 AI 评估**：先在本地预筛选，再将有限数量的候选交给 Claude 或可选的 DeepSeek，要求返回结构化结果和原文证据。
 4. **趋势跟踪**：建立默认 180 天的初始基线，按日更新、按周重新评估趋势标签。
 5. **评分与推荐**：由 Python 计算加权总分，结合相关性、时效性、多样性和历史推荐，最多选择 10 篇论文。
-6. **生成与校验**：先生成暂存日报，再检查结构、元数据、来源、论文身份、链接和分数；通过后才发布到 `reports/YYYY-MM-DD.md`。
+6. **生成与校验**：先生成暂存周报，再检查结构、元数据、来源、论文身份、链接和分数；通过后才发布到 `reports/YYYY-MM-DD.md`。
 
-AI 服务不可用时，已抓取的数据和分析队列仍会保存。系统可以使用已有合格评估继续筛选；合格论文不足时不发布日报。联网身份查询临时失败、出版商反爬等情况可能记录为警告，具体规则见[校验策略](docs/validation_policy.md)。
+AI 服务不可用时，已抓取的数据和分析队列仍会保存。系统可以使用已有合格评估继续筛选；合格论文不足时不发布周报。联网身份查询临时失败、出版商反爬等情况可能记录为警告，具体规则见[校验策略](docs/validation_policy.md)。
 
 ## 支持的数据源
 
@@ -77,7 +77,7 @@ uv run research-agent queue status
 uv run research-agent run --dry-run --skip-llm
 ```
 
-这条命令仍会抓取真实文献；缓存中的合格评估不足时不会生成日报。
+这条命令仍会抓取真实文献；缓存中的合格评估不足时不会生成周报。
 
 ## 部署到 GitHub Actions
 
@@ -87,7 +87,7 @@ uv run research-agent run --dry-run --skip-llm
 2. 在已登录 Claude Code、具备适用订阅的本地机器上运行 `claude setup-token`。
 3. 将 token 保存为仓库 Secret `CLAUDE_CODE_OAUTH_TOKEN`。可运行 `scripts/set_claude_token.sh`，按隐藏输入提示粘贴 token；脚本会更新 Secret 并触发认证检查。
 4. 设置仓库 Variable `RESEARCH_AGENT_CONTACT_EMAIL`，按需设置 Secret `OPENALEX_API_KEY` 和 `NCBI_API_KEY`。
-5. 在 Settings → Actions 中允许所需 Actions，并确保写入任务有权推送日报和状态分支。配置分支保护时，需要同时安排自动发布的写入权限。
+5. 在 Settings → Actions 中允许所需 Actions，并确保写入任务有权推送周报和状态分支。配置分支保护时，需要同时安排自动发布的写入权限。
 6. 在 Actions → **Daily research digest** 手动运行，首次选择 `dry_run: true`，检查抓取、分析和校验结果，再开启正常发布。
 
 也可以用 GitHub CLI 设置变量和 Secret：
@@ -101,7 +101,7 @@ gh secret set NCBI_API_KEY
 
 不要设置 `ANTHROPIC_API_KEY`：当前工作流会在检测到该仓库 Secret 时停止。默认 Claude 路径使用订阅 OAuth，没有自动切换到付费 API 的机制。
 
-**`dry_run` 仍会抓取数据、调用已启用的 AI 服务并持久化进度及合格评估**，只是跳过日报正式发布和日报提交。它不能用于隔离私有数据或避免服务用量。
+**`dry_run` 仍会抓取数据、调用已启用的 AI 服务并持久化进度及合格评估**，只是跳过周报正式发布和周报提交。它不能用于隔离私有数据或避免服务用量。
 
 ### 可选：使用 DeepSeek
 
@@ -153,10 +153,10 @@ gh secret set DEEPSEEK_API_KEY
 | `score --date D --provider import` | 校验并导入现有评估文件 |
 | `score --date D --provider deepseek` | 使用已配置的 DeepSeek 进行付费评估 |
 | `trends update --date D [--weekly]` | 更新趋势快照 |
-| `digest generate --date D` | 生成并校验暂存日报 |
-| `digest validate --date D` | 重新校验已生成的日报 |
+| `digest generate --date D` | 生成并校验暂存周报 |
+| `digest validate --date D` | 重新校验已生成的周报 |
 | `run --date D [--dry-run] [--skip-llm]` | 运行本地完整流程 |
-| `backfill --start A --end B` | 按历史时点补生成日报 |
+| `backfill --start A --end B` | 按历史时点补生成周报 |
 | `queue status`、`queue retry --eligible` | 查看队列、重新释放可重试任务 |
 | `history [--paper ID]` | 查看推荐历史和论文审计记录 |
 | `tags list` | 查看趋势标签；其他管理子命令见 `tags --help` |
@@ -185,7 +185,7 @@ uv run research-agent evaluate
 - 本地状态位于 `state/research.sqlite3`；CI 将完整数据库序列化到 **`research-data` 分支**。压缩用于节省空间，不提供访问控制。
 - Claude 消耗订阅额度，和其他 Claude Code 使用共享；DeepSeek 为可选付费服务。调用失败后会保留队列，按策略重试。
 - 外部数据源可能有限速、配额或认证要求；GitHub Actions 的可用额度和计费以账户当前规则为准。
-- `reporting.abstract_policy: link_only` 只让新生成的日报展示摘要链接，**不会清除数据库、历史提交或 Actions 产物中的摘要**。
+- `reporting.abstract_policy: link_only` 只让新生成的周报展示摘要链接，**不会清除数据库、历史提交或 Actions 产物中的摘要**。
 - 公开仓库前，应分别检查代码与提交历史、所有分支、研究画像与反馈、Actions 日志和产物。若只想公开代码，最省事的做法是新建经过筛选的代码仓库，把现有自动化及状态留在私有仓库。
 
 ## 目录结构
@@ -195,11 +195,11 @@ config/              YAML 配置
 prompts/             版本化任务提示和评分规则
 src/research_agent/  抓取、去重、筛选、评估、趋势、报告和校验
 tests/               单元、集成、端到端和显式联网测试
-reports/             正式日报；.staging/ 为被 Git 忽略的暂存目录
+reports/             正式周报；.staging/ 为被 Git 忽略的暂存目录
 feedback/            人工反馈、标注集和调整建议
 docs/                架构、方法、部署、运维和示例
 scripts/             认证辅助和合成示例生成脚本
-.github/workflows/   每日流程、测试和认证检查
+.github/workflows/   每日流程（每周发布周报）、测试和认证检查
 ```
 
 ## 许可证

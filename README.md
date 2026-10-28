@@ -2,8 +2,9 @@
 
 [中文说明](README.zh-CN.md)
 
-An unattended literature monitor for a computational public-health researcher. Every day at
-**06:00 Asia/Shanghai**, it:
+An unattended literature monitor for a computational public-health researcher. It runs every day at
+**06:00 Asia/Shanghai** to collect and assess new papers (steps 1–4), and publishes **one digest per
+week** (steps 5–6, on Mondays by default; `reporting.digest_weekday`). Together, it:
 
 1. retrieves new and newly indexed papers from **PubMed, Europe PMC, OpenAlex, medRxiv** (topic
    queries) and **Crossref** (high-priority journals by ISSN), resuming from durable per-query
@@ -13,7 +14,8 @@ An unattended literature monitor for a computational public-health researcher. E
 3. prescreens cheaply, then sends a bounded shortlist to **Claude via `anthropics/claude-code-action`
    (Claude Code subscription OAuth, no API key)** for structured, evidence-grounded assessment;
 4. maintains a versioned trend-tag database (180-day baseline, daily updates, weekly reassessment);
-5. computes weighted scores **in Python**, selects up to 10 papers, and writes
+5. computes weighted scores **in Python**, selects up to 10 papers from everything assessed since the
+   last digest, and writes
    `reports/YYYY-MM-DD.md` with a narrative overview and full score breakdowns;
 6. **independently validates** the file against stored records and authoritative sources; only a
    passing digest is committed (`docs(digest): add public health research digest for YYYY-MM-DD`).

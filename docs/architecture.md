@@ -4,7 +4,12 @@ Deterministic Python owns identifiers, dates, scores, validation and publication
 semantic interpretation and is reached only through `anthropics/claude-code-action` as a file
 adapter (manifest in, JSON out). No Python code calls an LLM API.
 
-## Daily flow (GitHub Actions, `.github/workflows/daily_digest.yml`)
+## Flow (GitHub Actions, `.github/workflows/daily_digest.yml`)
+
+The whole pipeline runs daily, so ingestion windows and Claude batches stay small. On days other
+than `reporting.digest_weekday` (default Monday), `prepare` writes no narrative manifest and
+`publish` only imports the assessments and updates trends (status `not_scheduled`); the weekly
+digest then selects from everything assessed during the week. `force_digest` overrides this.
 
 ```
             ┌──────────────────── ingest job (contents: write) ────────────────────┐
@@ -30,7 +35,7 @@ schedule →  │ restore SQLite from research-data                             
             │ restore state; validate/import outputs (schema + grounding)          │
             │ settle every leased job: completed | retryable | permanent           │
             │ trend snapshot (daily; weekly reassessment on configured weekday)    │
-            │ deterministic scoring + selection (≤10, no padding)                  │
+            │ digest weekday only: scoring + selection (≤10, no padding)           │
             │ render to reports/.staging → independent gate (+ bounded repair)     │
             │ PUSH state → promote report atomically → commit docs(digest): …      │
             └──────────────────────────────────────────────────────────────────────┘

@@ -14,7 +14,7 @@ every run and report.
 | `trends.yaml` | Taxonomy (status, pinned, aliases, parents, match rules, manual_override, seed) and trend parameters (windows, weights, smoothing, minimum sample, corpus threshold, reassessment weekday, external signals, proposal limits) |
 | `ranking.yaml` | Max recommendations, minimum verified papers, horizon, relevance thresholds, exploratory cap, completeness minimum, diversity λ, resurfacing rules |
 | `llm.yaml` | Analysis provider: `claude_code_action` + `oauth_subscription` (default) or `deepseek` + `api_key` (optional, pay-per-use); `allow_api_key_fallback: false` (enforced — never switches automatically), model, prompt version, per-stage turn/time/batch/workload limits, DeepSeek model/token budget, shortlist sizes, queue retry policy, optional local Ollama |
-| `reporting.yaml` | Time zone, narrative word range, abstract policy (`full` / `link_only`, per-license overrides), footer |
+| `reporting.yaml` | Digest weekday (default Monday), time zone, narrative word range, abstract policy (`full` / `link_only`, per-license overrides), footer |
 | `validation.yaml` | Online identity and URL checks, timeouts, repair rounds, title-match ratio |
 | `runtime.yaml` | DB path, windows (overlap 7 d, reconciliation 30 d, baseline 180 d, horizon 30 d, backfill max), chunks per run, data-branch name/path, git remote/branch |
 
@@ -25,6 +25,7 @@ every run and report.
 | Maximum candidate age (recommendation horizon) | 30 days | `ranking.publication_horizon_days` |
 | Core / exploratory relevance threshold | 55 / 60 | `ranking.*_relevance_threshold` |
 | Maximum exploratory selections | 2 | `ranking.max_exploratory` |
+| Digest weekday (collection and assessment run daily) | Monday | `reporting.digest_weekday` |
 | Minimum verified papers to publish | 2 | `ranking.min_verified_papers` |
 | Minimum metadata completeness | 0.5 | `ranking.min_metadata_completeness` |
 | Daily Claude workload | ≤ 40 papers, batches of 8, 30 turns | `llm.stages.scoring` |

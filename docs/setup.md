@@ -95,7 +95,10 @@ the action, so no OIDC/app installation is needed.
 
 ## 7. Verify the scheduled run
 
-The schedule is `cron: "0 6 * * *"` with `timezone: "Asia/Shanghai"`. GitHub may start scheduled
+The schedule is `cron: "0 6 * * *"` with `timezone: "Asia/Shanghai"`: papers are collected and
+assessed every day, and the digest is published on `reporting.digest_weekday` (default Monday); on
+other days `publish-summary.json` shows `status: not_scheduled`. To get a digest on another day, run
+the workflow manually with `force_digest`. GitHub may start scheduled
 runs late; the report date is computed in Asia/Shanghai, so it is still correct. After the first
 06:00 run: the run appears with event `schedule`; `logs-publish` → `publish-summary.json` shows
 `scheduled_date`, start/completion and duration; a new commit appears on `main` (or the summary says

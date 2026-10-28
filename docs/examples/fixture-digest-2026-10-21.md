@@ -2,27 +2,27 @@
 ---
 date: '2026-10-21'
 timezone: Asia/Shanghai
-generated_at_utc: '2026-10-22T07:28:47Z'
+generated_at_utc: '2026-10-28T05:32:36Z'
 paper_count: 10
 pipeline_version: 0.1.0
-scoring_version: scoring-d37b266615
-rubric_version: rubric-83f3f3d704
+scoring_version: scoring-2ed97250d9
+rubric_version: rubric-d8fe21a716
 prompt_version: '1.0'
 model: fixture-simulated
 trend_snapshot_version: trend-v1-db2b77f24b
 narrative_source: simulated fixture provider, not Claude
-config_hash: 893523ed82
+config_hash: 04a0a23601
 run_id: example
 validation_status: passed
 ---
 
-# Today Digest - 2026-10-21
+# Weekly Digest - 2026-10-21
 
-## Daily overview
+## Weekly overview
 
-[simulated fixture assessment — not a research judgement] This simulated overview was produced by the offline fixture provider rather than by Claude, so it only restates structured fields of today's selection. The selected set is drawn from the configured research profile, with research domains spanning ai_agents, calibration_uq, cancer_control, causal_inference, hcv_infectious, health_economics, llm_rag_kg, policy_optimization, rl_sequential, simulation_models, tobacco_control, and the matched trend tags include Agent-based public health simulation, Bayesian calibration and uncertainty quantification, Cancer screening optimization, Causal inference and simulation integration, Decision-making under uncertainty, Distributional cost-effectiveness analysis, Infectious disease elimination modelling, LLM-assisted evidence synthesis, Reinforcement learning for adaptive interventions. Methodologically, the set mixes simulation and decision-analytic modelling with statistical and economic evaluation, which is consistent with the profile's emphasis on model-based public health decision-making. Cross-disciplinary content is limited to what the lexical screen detected, and no claim is made here about field-wide changes, because a small daily selection cannot support such conclusions. In a production run this paragraph is written by Claude from the same manifest and must pass the same validation: prose only, no per-paper enumeration, no numbers absent from the manifest, and a word count within the configured range. Readers should treat this fixture paragraph purely as a demonstration of report structure and of the validation gate rather than as an interpretation of the literature.
+[simulated fixture assessment — not a research judgement] This simulated overview was produced by the offline fixture provider rather than by Claude, so it only restates structured fields of this week's selection. The selected set is drawn from the configured research profile, with research domains spanning ai_agents, calibration_uq, cancer_control, causal_inference, hcv_infectious, health_economics, llm_rag_kg, policy_optimization, rl_sequential, simulation_models, tobacco_control, and the matched trend tags include Agent-based public health simulation, Bayesian calibration and uncertainty quantification, Cancer screening optimization, Causal inference and simulation integration, Decision-making under uncertainty, Distributional cost-effectiveness analysis, Infectious disease elimination modelling, LLM-assisted evidence synthesis, Reinforcement learning for adaptive interventions. Methodologically, the set mixes simulation and decision-analytic modelling with statistical and economic evaluation, which is consistent with the profile's emphasis on model-based public health decision-making. Cross-disciplinary content is limited to what the lexical screen detected, and no claim is made here about field-wide changes, because a small weekly selection cannot support such conclusions. In a production run this paragraph is written by Claude from the same manifest and must pass the same validation: prose only, no per-paper enumeration, no numbers absent from the manifest, and a word count within the configured range. Readers should treat this fixture paragraph purely as a demonstration of report structure and of the validation gate rather than as an interpretation of the literature.
 
-*AI-generated synthesis (simulated fixture provider, not Claude) of today's selected papers and the current trend snapshot; it interprets verified metadata and does not summarize papers individually.*
+*AI-generated synthesis (simulated fixture provider, not Claude) of this week's selected papers and the current trend snapshot; it interprets verified metadata and does not summarize papers individually.*
 
 ## Recommendations
 
@@ -54,7 +54,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99), Cancer screening optimization (trend score 0.99), Decision-making under uncertainty (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -69,9 +69,11 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: New method. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new method. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: calibration_uq, cancer_control, simulation_models, policy_optimization.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: calibration_uq, simulation_models, cancer_control, policy_optimization.
 
 **Evidence and confidence limitations:** No limitations reported.
+
+---
 
 ### 2. Dynamic transmission model of hepatitis C elimination among people who inject drugs in prisons
 
@@ -101,7 +103,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99), Infectious disease elimination modelling (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -116,16 +118,67 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: simulation_models, hcv_infectious, health_economics, calibration_uq.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: simulation_models, hcv_infectious, calibration_uq, health_economics.
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 3. Large language model agents for automating systematic review screening
+---
+
+### 3. Reinforcement learning for adaptive cancer screening policies in a simulated population
+
+| Field | Value |
+|---|---|
+| Canonical ID | `doi:10.5555/fixture.0011` |
+| Rank | 3 (raw-score rank 3) |
+| Authors | Testauthor11, A.; Example, B. |
+| Journal / server | Journal of Synthetic Public Health Fixtures |
+| Publication date | 2026-10-18 (first online); indexed 2026-10-18 |
+| DOI | [10.5555/fixture.0011](https://doi.org/10.5555/fixture.0011) |
+| PMID | Not available from verified sources |
+| URL | <https://doi.org/10.5555/fixture.0011> |
+| Peer review / preprint status | Peer-reviewed journal article |
+| Journal impact | No journal metric available |
+| Overall score | **65.89** / 100 |
+
+**Abstract** *(original abstract, verbatim from fixture data)*
+
+> SYNTHETIC TEST RECORD, not a real publication. We apply reinforcement learning to a Markov decision process representing adaptive cancer screening policies in a simulated population, comparing learned policies with guideline strategies.
+
+**Author keywords:** reinforcement learning; Markov decision process
+
+**MeSH terms:** No MeSH terms in verified sources
+
+**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: Reinforcement learning for adaptive interventions
+
+**Matched emerging trend tags:** Reinforcement learning for adaptive interventions (trend score 0.92)
+
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
+
+| Dimension | Weight | Score | Method | Confidence |
+|---|---:|---:|---|---:|
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
+| Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
+| Freshness | 0.10 | 86.20 | Python | 1.00 |
+| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
+| Cross-disciplinary transferability | 0.05 | 60.00 | Claude (rubric) | 0.70 |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **65.89** | weighted sum | |
+
+**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
+
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: rl_sequential, cancer_control.
+
+**Evidence and confidence limitations:** No limitations reported.
+
+---
+
+### 4. Large language model agents for automating systematic review screening
 
 | Field | Value |
 |---|---|
 | Canonical ID | `doi:10.5555/fixture.0013` |
-| Rank | 3 (raw-score rank 3) |
+| Rank | 4 (raw-score rank 4) |
 | Authors | Testauthor13, A.; Example, B. |
 | Journal / server | Journal of Synthetic Public Health Fixtures |
 | Publication date | 2026-10-15 (first online); indexed 2026-10-15 |
@@ -148,7 +201,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** LLM-assisted evidence synthesis (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -167,12 +220,14 @@ validation_status: passed
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 4. Optimal risk-stratified liver cancer screening via decision-analytic Markov models
+---
+
+### 5. Optimal risk-stratified liver cancer screening via decision-analytic Markov models
 
 | Field | Value |
 |---|---|
 | Canonical ID | `doi:10.5555/fixture.0005` |
-| Rank | 4 (raw-score rank 4) |
+| Rank | 5 (raw-score rank 5) |
 | Authors | Testauthor5, A.; Example, B. |
 | Journal / server | Journal of Synthetic Public Health Fixtures |
 | Publication date | 2026-10-15 (first online); indexed 2026-10-15 |
@@ -195,7 +250,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Cancer screening optimization (trend score 0.99), Decision-making under uncertainty (trend score 0.98)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -210,56 +265,11 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, calibration_uq, policy_optimization, simulation_models.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: calibration_uq, cancer_control, policy_optimization, simulation_models.
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 5. Reinforcement learning for adaptive cancer screening policies in a simulated population
-
-| Field | Value |
-|---|---|
-| Canonical ID | `doi:10.5555/fixture.0011` |
-| Rank | 5 (raw-score rank 5) |
-| Authors | Testauthor11, A.; Example, B. |
-| Journal / server | Journal of Synthetic Public Health Fixtures |
-| Publication date | 2026-10-18 (first online); indexed 2026-10-18 |
-| DOI | [10.5555/fixture.0011](https://doi.org/10.5555/fixture.0011) |
-| PMID | Not available from verified sources |
-| URL | <https://doi.org/10.5555/fixture.0011> |
-| Peer review / preprint status | Peer-reviewed journal article |
-| Journal impact | No journal metric available |
-| Overall score | **65.14** / 100 |
-
-**Abstract** *(original abstract, verbatim from fixture data)*
-
-> SYNTHETIC TEST RECORD, not a real publication. We apply reinforcement learning to a Markov decision process representing adaptive cancer screening policies in a simulated population, comparing learned policies with guideline strategies.
-
-**Author keywords:** reinforcement learning; Markov decision process
-
-**MeSH terms:** No MeSH terms in verified sources
-
-**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: Reinforcement learning for adaptive interventions
-
-**Matched emerging trend tags:** Reinforcement learning for adaptive interventions (trend score 0.92)
-
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
-
-| Dimension | Weight | Score | Method | Confidence |
-|---|---:|---:|---|---:|
-| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
-| Emerging trend relevance | 0.15 | 91.79 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.10 | 86.20 | Python | 1.00 |
-| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
-| Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
-| Journal impact | 0.15 | 30.00 | Python | 1.00 |
-| **Overall** | **1.00** | **65.14** | weighted sum | |
-
-**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
-
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, rl_sequential.
-
-**Evidence and confidence limitations:** No limitations reported.
+---
 
 ### 6. Distributional cost-effectiveness analysis of national tobacco control policies
 
@@ -289,7 +299,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Distributional cost-effectiveness analysis (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -304,9 +314,11 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: health_economics, tobacco_control, simulation_models.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: health_economics, simulation_models, tobacco_control.
 
 **Evidence and confidence limitations:** No limitations reported.
+
+---
 
 ### 7. Uncertainty quantification for compartmental epidemic models with approximate Bayesian computation
 
@@ -336,7 +348,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Bayesian calibration and uncertainty quantification (trend score 0.99)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -354,6 +366,8 @@ validation_status: passed
 **Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: calibration_uq, simulation_models.
 
 **Evidence and confidence limitations:** No limitations reported.
+
+---
 
 ### 8. Agent-based model of prostate cancer screening uptake and overdiagnosis
 
@@ -383,7 +397,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Agent-based public health simulation (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -398,63 +412,18 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: cancer_control, simulation_models, policy_optimization, calibration_uq.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: simulation_models, cancer_control, calibration_uq, policy_optimization.
 
 **Evidence and confidence limitations:** No limitations reported.
 
-### 9. Retrieval-augmented generation with a knowledge graph for evidence synthesis in health economics
+---
 
-| Field | Value |
-|---|---|
-| Canonical ID | `doi:10.5555/fixture.0012` |
-| Rank | 9 (raw-score rank 9) |
-| Authors | Testauthor12, A.; Example, B. |
-| Journal / server | Journal of Synthetic Public Health Fixtures |
-| Publication date | 2026-10-17 (first online); indexed 2026-10-17 |
-| DOI | [10.5555/fixture.0012](https://doi.org/10.5555/fixture.0012) |
-| PMID | Not available from verified sources |
-| URL | <https://doi.org/10.5555/fixture.0012> |
-| Peer review / preprint status | Peer-reviewed journal article |
-| Journal impact | No journal metric available |
-| Overall score | **63.35** / 100 |
-
-**Abstract** *(original abstract, verbatim from fixture data)*
-
-> SYNTHETIC TEST RECORD, not a real publication. A retrieval-augmented generation pipeline using a knowledge graph and a large language model supports evidence synthesis for health economic model parameterization.
-
-**Author keywords:** retrieval-augmented generation; knowledge graph; large language model
-
-**MeSH terms:** No MeSH terms in verified sources
-
-**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: LLM-assisted evidence synthesis
-
-**Matched emerging trend tags:** LLM-assisted evidence synthesis (trend score 0.98)
-
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
-
-| Dimension | Weight | Score | Method | Confidence |
-|---|---:|---:|---|---:|
-| Research alignment | 0.25 | 70.00 | Claude (rubric) | 0.70 |
-| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
-| Emerging trend relevance | 0.15 | 97.65 | hybrid (Claude tags + Python) | — |
-| Freshness | 0.10 | 82.03 | Python | 1.00 |
-| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
-| Cross-disciplinary transferability | 0.05 | 60.00 | Claude (rubric) | 0.70 |
-| Journal impact | 0.15 | 30.00 | Python | 1.00 |
-| **Overall** | **1.00** | **63.35** | weighted sum | |
-
-**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
-
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: llm_rag_kg.
-
-**Evidence and confidence limitations:** No limitations reported.
-
-### 10. Target trial emulation integrated with simulation for evaluating smoking cessation policy
+### 9. Target trial emulation integrated with simulation for evaluating smoking cessation policy
 
 | Field | Value |
 |---|---|
 | Canonical ID | `doi:10.5555/fixture.0008` |
-| Rank | 10 (raw-score rank 10) |
+| Rank | 9 (raw-score rank 10) |
 | Authors | Testauthor8, A.; Example, B. |
 | Journal / server | Journal of Synthetic Public Health Fixtures |
 | Publication date | 2026-10-11 (first online); indexed 2026-10-11 |
@@ -477,7 +446,7 @@ validation_status: passed
 
 **Matched emerging trend tags:** Causal inference and simulation integration (trend score 0.92)
 
-**Score breakdown** (weighted sum computed in Python; scoring version `scoring-d37b266615`)
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
 
 | Dimension | Weight | Score | Method | Confidence |
 |---|---:|---:|---|---:|
@@ -492,9 +461,60 @@ validation_status: passed
 
 **Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
 
-**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: causal_inference, tobacco_control, simulation_models, policy_optimization.
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: causal_inference, simulation_models, tobacco_control, policy_optimization.
 
 **Evidence and confidence limitations:** No limitations reported.
+
+---
+
+### 10. Health economic evaluation of screening optimization for colorectal cancer using microsimulation
+
+| Field | Value |
+|---|---|
+| Canonical ID | `doi:10.5555/fixture.0007` |
+| Rank | 10 (raw-score rank 11) |
+| Authors | Testauthor7, A.; Example, B. |
+| Journal / server | Journal of Synthetic Public Health Fixtures |
+| Publication date | 2026-10-12 (first online); indexed 2026-10-12 |
+| DOI | [10.5555/fixture.0007](https://doi.org/10.5555/fixture.0007) |
+| PMID | Not available from verified sources |
+| URL | <https://doi.org/10.5555/fixture.0007> |
+| Peer review / preprint status | Peer-reviewed journal article |
+| Journal impact | No journal metric available |
+| Overall score | **49.15** / 100 |
+
+**Abstract** *(original abstract, verbatim from fixture data)*
+
+> SYNTHETIC TEST RECORD, not a real publication. A health economic evaluation combines microsimulation and cost-utility analysis to optimize screening start ages, reporting QALY gains and incremental cost-effectiveness ratios.
+
+**Author keywords:** cost-utility; screening optimization
+
+**MeSH terms:** No MeSH terms in verified sources
+
+**AI-assigned topic tags** *(AI-generated classification, not author keywords)*: No tags assigned
+
+**Matched emerging trend tags:** No matched trend tags
+
+**Score breakdown** (weighted sum computed in Python; scoring version `scoring-2ed97250d9`)
+
+| Dimension | Weight | Score | Method | Confidence |
+|---|---:|---:|---|---:|
+| Research alignment | 0.25 | 82.00 | Claude (rubric) | 0.70 |
+| Methodological innovation | 0.20 | 50.00 | Claude (rubric) | 0.70 |
+| Emerging trend relevance | 0.15 | 0.00 | hybrid (Claude tags + Python) | — |
+| Freshness | 0.10 | 64.04 | Python | 1.00 |
+| Evidence and methodological rigor | 0.10 | 55.00 | Claude (rubric) | 0.70 |
+| Cross-disciplinary transferability | 0.05 | 45.00 | Claude (rubric) | 0.70 |
+| Journal impact | 0.15 | 30.00 | Python | 1.00 |
+| **Overall** | **1.00** | **49.15** | weighted sum | |
+
+**Methodological assessment** *(AI interpretation, preliminary — abstract only)*: Existing method applied to a new problem. [simulated fixture assessment — not a research judgement] Preliminary, abstract-only classification: new application. Contributions: [simulated fixture assessment — not a research judgement] see source abstract.
+
+**Why it is recommended for you** *(AI interpretation)*: [simulated fixture assessment — not a research judgement] Matches profile topics: health_economics, simulation_models, policy_optimization.
+
+**Evidence and confidence limitations:** No limitations reported.
+
+---
 
 ## Methodology and coverage
 
@@ -511,6 +531,6 @@ Publication horizon: 30 days before 2026-10-21; retrieval overlap 7 days; trend 
 
 Providers: n/a.
 
-Versions: pipeline 0.1.0, scoring `scoring-d37b266615`, rubric `rubric-83f3f3d704`, prompts 1.0, trend snapshot `trend-v1-db2b77f24b`, configuration `893523ed82`.
+Versions: pipeline 0.1.0, scoring `scoring-2ed97250d9`, rubric `rubric-d8fe21a716`, prompts 1.0, trend snapshot `trend-v1-db2b77f24b`, configuration `04a0a23601`.
 
 Source metadata (titles, authors, dates, identifiers, abstracts, keywords, MeSH) comes verbatim from the named providers. Assessments, tags and the overview marked as AI interpretation are generated by Claude from that metadata and may be wrong; novelty judgements are preliminary when based on abstracts only.

@@ -1,6 +1,8 @@
 reporting:
   timezone: Asia/Shanghai
   output_dir: reports
+  # Collection and Claude assessment run daily; the digest is published weekly on this day.
+  digest_weekday: monday
   narrative_words: {min: 150, max: 250}
   # Abstract reproduction policy:
   #   full      - reproduce the verified abstract verbatim with its source

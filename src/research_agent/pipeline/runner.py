@@ -155,6 +155,10 @@ def fill_preprint_first_dates(db: Database, settings: Settings, report_date: dat
     return n
 
 
+def is_digest_day(settings: Settings, d: date) -> bool:
+    return d.strftime("%A").lower() == settings.reporting.digest_weekday
+
+
 # =============================================================================== prepare (analysis job)
 
 def prepare_narrative(db: Database, settings: Settings, report_date: date, *, run_id: str) -> dict | None:
@@ -200,7 +204,7 @@ def prepare_trend_discovery(db: Database, settings: Settings, report_date: date)
 
 @dataclass
 class PublishResult:
-    status: str                                 # published | already_published | blocked | insufficient | dry_run
+    status: str                                 # published | already_published | blocked | insufficient | dry_run | not_scheduled
     report_path: Path | None = None
     gate: GateResult | None = None
     summary: dict = field(default_factory=dict)
@@ -237,7 +241,10 @@ def refresh_metadata(db: Database, settings: Settings, paper_id: int, providers:
 
 def publish_stage(db: Database, settings: Settings, report_date: date, *, run_id: str, online: bool = True,
                   identity: IdentityVerifier | None = None, links: LinkVerifier | None = None, providers=None,
-                  dry_run: bool = False, force: bool = False, strict_as_of: bool = False) -> PublishResult:
+                  dry_run: bool = False, force: bool = False, strict_as_of: bool = False,
+                  scheduled: bool = False) -> PublishResult:
+    """`scheduled=True` (the CI run) publishes only on the digest weekday; on other days it still
+    imports the day's assessments and updates trends, so the weekly digest draws on the whole week."""
     rec = RunRecord(run_id, "publish" if not dry_run else "dry_run", report_date).start(db, settings)
     d = report_date.isoformat()
     final = settings.reports_dir / f"{d}.md"
@@ -259,6 +266,14 @@ def publish_stage(db: Database, settings: Settings, report_date: date, *, run_id
     if weekly and tm.exists():
         with db.transaction():
             proposals = cca.import_tag_proposals(db, settings, run_id=run_id, manifest=json.loads(tm.read_text()))
+    if scheduled and not is_digest_day(settings, report_date):
+        rec.summary.update({"stage": "publish", "scheduled_date": d, "run_id": run_id, "status": "not_scheduled",
+                            "reason": f"digest is published on {settings.reporting.digest_weekday.capitalize()}s",
+                            "llm_evaluated_count": imp.completed, "analysis_failures": imp.failed,
+                            "claude_action_failure_category": status.category if status else None,
+                            "trend_snapshot_id": snap.id, "trend_kind": snap.kind, "tag_proposals": proposals})
+        rec.finish(db, "skipped")
+        return PublishResult("not_scheduled", None, summary=rec.summary)
     ingest_summary = latest_stage_summary(db, report_date, "ingest")
     providers_status = {p: "ok" for p in ingest_summary.get("successful_providers", [])}
     providers_status.update({p: "unavailable this run" for p in ingest_summary.get("failed_providers", [])})

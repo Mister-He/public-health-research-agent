@@ -333,6 +333,8 @@ class ReportingConfig(StrictModel):
     abstract_policy: Literal["full", "link_only"] = "full"
     link_only_licenses: list[str] = []
     include_coverage_footer: bool = True
+    # Papers are collected and assessed every day; the digest is published on this weekday only.
+    digest_weekday: Literal["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] = "monday"
 
 
 class ValidationConfig(StrictModel):

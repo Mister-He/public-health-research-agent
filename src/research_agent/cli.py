@@ -488,7 +488,8 @@ def cmd_ci(s: Settings, args) -> int:
         s.db_path.unlink(missing_ok=True)
         restore_snapshot(Path(args.snapshot), s.db_path)
         db = open_db(s.db_path)
-        n = runner.prepare_narrative(db, s, d, run_id=run_id)
+        digest = args.force_digest or runner.is_digest_day(s, d)
+        n = runner.prepare_narrative(db, s, d, run_id=run_id) if digest else None
         t = runner.prepare_trend_discovery(db, s, d)
         _gh_output(narrative=str(n is not None).lower(), trends=str(t is not None).lower())
         print(f"narrative manifest: {n is not None}; trend manifest: {t is not None}")
@@ -529,6 +530,9 @@ def cmd_ci(s: Settings, args) -> int:
         def stage(db):
             out, cur = {}, args.start
             while cur <= args.end:
+                if not runner.is_digest_day(s, cur):    # weekly digests: backfill digest days only
+                    cur += timedelta(days=1)
+                    continue
                 out[cur] = runner.publish_stage(db, s, cur, run_id=f"{run_id}-bf-{cur}", online=not args.offline,
                                                 dry_run=args.dry_run, strict_as_of=True)
                 cur += timedelta(days=1)
@@ -548,7 +552,7 @@ def cmd_ci(s: Settings, args) -> int:
 
         def stage(db):
             res = runner.publish_stage(db, s, d, run_id=run_id, online=not args.offline, dry_run=args.dry_run,
-                                       force=args.force)
+                                       force=args.force, scheduled=not args.force_digest)
             holder["landscape"] = runner.write_landscape_file(db, s)
             return res
         # Dry runs still persist validated analysis results (Claude work is never thrown away);
@@ -701,6 +705,7 @@ def build_parser() -> argparse.ArgumentParser:
     ci.add_argument("--offline", action="store_true")
     ci.add_argument("--dry-run", action="store_true")
     ci.add_argument("--force", action="store_true")
+    ci.add_argument("--force-digest", action="store_true", help="prepare/publish: produce a digest on any weekday")
     ci.add_argument("--no-commit", action="store_true")
     return p
 

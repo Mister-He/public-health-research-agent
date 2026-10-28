@@ -1,6 +1,8 @@
-name: Daily research digest
+name: Research digest (daily collection, weekly digest)
 
-# 06:00 Asia/Shanghai every day (GitHub supports IANA time zones on schedules).
+# 06:00 Asia/Shanghai every day (GitHub supports IANA time zones on schedules). Every run collects
+# and assesses new papers; the digest itself is published only on `reporting.digest_weekday`
+# (config/reporting.yaml, default Monday), from everything assessed since the last digest.
 # If your GitHub plan/runner ignores `timezone`, the equivalent UTC schedule is "0 22 * * *"
 # (22:00 UTC = 06:00 next day in China Standard Time). Report dates are ALWAYS computed in
 # Asia/Shanghai by the pipeline, so a delayed start still produces the intended date.
@@ -15,7 +17,7 @@ on:
         required: false
         default: ""
       mode:
-        description: "daily | backfill | validation-only"
+        description: "daily = normal run (collect + assess; digest on the digest weekday) | backfill | validation-only"
         type: choice
         options: [daily, backfill, validation-only]
         default: daily
@@ -41,6 +43,10 @@ on:
         default: false
       skip_llm:
         description: "Skip Claude (rank with cached evaluations only)"
+        type: boolean
+        default: false
+      force_digest:
+        description: "Publish a digest even if today is not the digest weekday"
         type: boolean
         default: false
 
@@ -199,13 +205,15 @@ jobs:
       - name: Prepare narrative / weekly trend manifests (throwaway DB copy)
         id: prepare
         if: ${{ always() }}
-        run: uv run research-agent ci prepare --date "$REPORT_DATE" --snapshot analysis/state/research.sqlite3.gz
+        run: >-
+          uv run research-agent ci prepare --date "$REPORT_DATE" --snapshot analysis/state/research.sqlite3.gz
+          ${{ inputs.force_digest && '--force-digest' || '' }}
 
       - name: Claude arguments (narrative)
         id: nargs
         if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         run: uv run research-agent ci claude-args --stage narrative
-      - name: Claude — daily narrative
+      - name: Claude — weekly digest narrative
         id: narrative
         if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'claude_code_action' }}
         continue-on-error: true
@@ -224,7 +232,7 @@ jobs:
           --outcome "${{ steps.narrative.outcome }}"
           --execution-file "${{ steps.narrative.outputs.execution_file }}"
 
-      - name: DeepSeek — daily narrative (pay-per-use)
+      - name: DeepSeek — weekly digest narrative (pay-per-use)
         if: ${{ always() && steps.prepare.outputs.narrative == 'true' && steps.prov.outputs.provider == 'deepseek' }}
         timeout-minutes: 15
         env:
@@ -315,6 +323,7 @@ jobs:
           uv run research-agent ci publish --date "$REPORT_DATE"
           --analysis-result "${{ needs.analyze.result }}"
           ${{ inputs.dry_run && '--dry-run' || '' }}
+          ${{ inputs.force_digest && '--force-digest' || '' }}
       - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:

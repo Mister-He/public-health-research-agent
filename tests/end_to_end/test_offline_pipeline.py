@@ -194,3 +194,15 @@ def test_currency_dollars_in_abstracts_are_escaped_and_still_verbatim(db, settin
     assert r"$\alpha$" in text and r"\$\alpha" not in text          # LaTeX math left as is
     assert run_gate(db, settings, REPORT_DATE, res.report_path, text).passed   # still verbatim vs. the source
 
+
+def test_scheduled_run_publishes_only_on_digest_weekday(db, settings):
+    _ingest_and_score(db, settings, narrative=False)
+    assert REPORT_DATE.strftime("%A") == "Wednesday" and settings.reporting.digest_weekday == "monday"
+    res = publish_stage(db, settings, REPORT_DATE, run_id=RUN, online=False, scheduled=True)
+    assert res.status == "not_scheduled" and res.exit_code == 0 and res.report_path is None
+    assert not (settings.reports_dir / f"{REPORT_DATE.isoformat()}.md").exists()
+    # The day's assessments are still imported, so the weekly digest can use them.
+    assert res.summary["llm_evaluated_count"] > 0
+    assert db.scalar("SELECT COUNT(*) FROM recommendations") == 0
+    settings.reporting.digest_weekday = "wednesday"
+    assert publish_stage(db, settings, REPORT_DATE, run_id=RUN, online=False, scheduled=True).status == "published"

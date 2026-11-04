@@ -75,7 +75,9 @@ Rejected evaluations are retried with backoff and become `permanent_failed` afte
 ## Ranking
 
 Eligibility: not retracted, not failed validation, verified identifier + title + URL, first
-published within the horizon and not after the report date, completeness ≥ 0.5, alignment ≥ 55
+published within the horizon and not after the report date, within public-health scope (title,
+abstract, keywords, MeSH or journal mention a human health context; checked before Claude analysis
+too), completeness ≥ 0.5, alignment ≥ 55
 (core) / 60 (exploratory), not previously recommended (unless a resurfacing rule applies), and — for
 a preprint whose journal version is also a candidate — the journal version only.
 

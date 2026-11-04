@@ -29,6 +29,7 @@ def ev(cid="doi:10.5555/x", align=80.0, cat="core", tags=(), **dims) -> PaperEva
 def paper(cid="doi:10.5555/x", days_ago=3, **kw) -> Paper:
     from datetime import timedelta
     kw.setdefault("metadata_completeness", 0.9)
+    kw.setdefault("abstract", "A simulation model of cancer screening policy.")
     return Paper(id=kw.pop("id", 1), canonical_id=cid, doi=cid.removeprefix("doi:"), title="T", authors=["A"],
                  journal="J", canonical_url=f"https://doi.org/{cid.removeprefix('doi:')}",
                  first_publication_date=D - timedelta(days=days_ago), **kw)
@@ -117,6 +118,8 @@ def test_eligibility_rules(settings):
     assert "look-ahead" in check(Candidate(paper(days_ago=-2), 1, ev(), "core"), cfg, D)
     assert check(Candidate(paper(is_retracted=True), 1, ev(), "core"), cfg, D) == "retracted"
     assert "completeness" in check(Candidate(paper(metadata_completeness=0.2), 1, ev(), "core"), cfg, D)
+    off_topic = paper(abstract="Bayesian calibration of a Ti-6Al-4V crystal plasticity model.")
+    assert "public-health scope" in check(Candidate(off_topic, 1, ev(align=90), "core"), cfg, D)
 
 
 def _cands(spec):

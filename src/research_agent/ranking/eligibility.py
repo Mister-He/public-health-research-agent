@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import date, timedelta
 
@@ -9,6 +10,24 @@ from research_agent.llm.structured_output import PaperEvaluation
 from research_agent.metadata.schemas import Paper
 from research_agent.settings import RankingConfig
 from research_agent.storage.database import Database
+
+
+# Public-health scope: the record must mention a human health context. Method-only papers
+# (engineering, logistics, finance) are out of scope however well they match the methods profile.
+# shortcut: lexical, not semantic; the alignment rubric also sends out-of-scope papers to category "none".
+HEALTH_CONTEXT = re.compile(
+    r"\b(health|disease|epidemi|patient|clinic|medic|hospital|mortality|morbidity|infect|cancer|tumou?r"
+    r"|oncolog|screening|vaccin|immuni[sz]|hiv|hepatitis|hcv|tubercul|malaria|influenza|covid|sars-cov"
+    r"|pandemic|outbreak|pathogen|smok|tobacco|alcohol|opioid|substance use|obes|diabet|cardiovascular"
+    r"|stroke|dementia|mental|suicid|injur|nutrition|maternal|neonat|pregnan|qaly|daly|life expectancy"
+    r"|life-years?|cost-effective|care\b|therap|treatment|drug|surviv|incidence|prevalence|nurs|physician"
+    r"|pharma|prevent)", re.I)
+
+
+def out_of_scope_reason(p: Paper) -> str | None:
+    text = " ".join([p.title or "", p.abstract or "", " ".join(p.author_keywords), " ".join(p.mesh_terms),
+                     p.journal or ""])
+    return None if HEALTH_CONTEXT.search(text) else "outside public-health scope (no health context in record)"
 
 
 @dataclass
@@ -44,6 +63,8 @@ def check(c: Candidate, cfg: RankingConfig, report_date: date, settings=None) ->
         return "published after the report date (look-ahead)"
     if p.first_publication_date < report_date - timedelta(days=cfg.publication_horizon_days):
         return f"older than the {cfg.publication_horizon_days}-day horizon"
+    if reason := out_of_scope_reason(p):
+        return reason
     if p.metadata_completeness < cfg.min_metadata_completeness:
         return f"metadata completeness {p.metadata_completeness:.2f} < {cfg.min_metadata_completeness}"
     align = c.evaluation.dimensions.get("research_alignment")

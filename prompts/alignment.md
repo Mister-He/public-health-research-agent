@@ -1,8 +1,13 @@
-<!-- prompt_version: 1.0 | dimension: research_alignment | rubric_version: 1.1 -->
+<!-- prompt_version: 1.0 | dimension: research_alignment | rubric_version: 1.2 -->
 # Rubric: Research alignment (0–100)
 
 Judge how useful this paper is to the research profile in the manifest (core topics weigh
 more than exploratory ones). Reason about substance, not keyword counts.
+
+Scope gate (apply first): the paper must address human health, disease, health care or
+population health. A paper whose application is outside public health (e.g. materials science,
+engineering, manufacturing, logistics, finance, climate without a health outcome) is out of
+scope however relevant its method: set `profile_category` to `none` and score 0–20.
 
 Highest priority: (1) microsimulation and other individual-level, agent-based or dynamic
 transmission simulation models; (2) AI-empowered modelling methods (machine learning, deep
@@ -22,7 +27,7 @@ Anchors:
   microsimulation; RL optimizing policies inside a simulation model).
 - 70–89: strong methodological or applied fit with one core area.
 - 50–69: partial fit — relevant application with standard methods, or relevant method in a
-  distant application.
+  distant health application.
 - 25–49: tangential; useful mostly as background.
 - 0–24: not relevant (e.g. purely clinical/biological findings with no modelling/decision content).
 

@@ -1,18 +1,18 @@
 # 公共卫生研究情报助手
 
-[English](README.md) · [示例周报](docs/examples/fixture-digest-2026-10-21.md) · [架构说明](docs/architecture.md) · [公开前风险审查](docs/public-release-review.zh-CN.md)
+[English](README.md) · [示例周报](docs/examples/fixture-digest-2026-10-21.md) · [架构说明](docs/architecture.md)
 
 为计算公共卫生研究者持续检索、筛选和评估学术文献，生成可追溯、经过校验的 Markdown 周报。默认通过 GitHub Actions 在每天 **06:00（Asia/Shanghai，UTC+8）**运行，每天检索和评估新文献，每周一（`reporting.digest_weekday`）从本周评估过的论文中发布一份周报；实际启动时间可能受 GitHub 调度延迟影响。
 
-当前研究画像涵盖生物统计、流行病学建模、微观模拟、传染病传播模型、卫生经济学、公共卫生政策，以及可迁移到这些领域的 AI 方法。研究主题、期刊和评分规则均可配置。
+当前研究画像以**微观模拟等仿真模型**和 **AI 赋能的建模方法**（用机器学习、强化学习或大语言模型构建、校准、模拟加速或优化这些模型）为重点，生物统计、模型校准、卫生经济学、公共卫生政策优化，以及癌症筛查、控烟、丙肝等应用领域作为其他核心主题。所有推荐都必须**属于公共卫生范围**：应用对象不是人类健康的论文（如材料科学、物流）即使方法匹配也会被排除。研究主题、期刊和评分规则均可配置。
 
 ## 工作流程
 
 1. **增量检索**：从多个文献索引和预印本平台获取记录，按数据源和查询保存进度，失败后继续补抓。
 2. **规范化与去重**：统一 DOI、PMID、PMCID 等标识，合并重复论文，保留字段来源与修订记录。
-3. **预筛选与 AI 评估**：先在本地预筛选，再将有限数量的候选交给 Claude 或可选的 DeepSeek，要求返回结构化结果和原文证据。
+3. **预筛选与 AI 评估**：先在本地预筛选，排除低于期刊影响力下限或超出公共卫生范围的论文，再将有限数量的候选交给 Claude 或可选的 DeepSeek，要求返回结构化结果和原文证据。
 4. **趋势跟踪**：建立默认 180 天的初始基线，按日更新、按周重新评估趋势标签。
-5. **评分与推荐**：由 Python 计算加权总分，结合相关性、时效性、多样性和历史推荐，最多选择 10 篇论文。
+5. **评分与推荐**：由 Python 计算加权总分，结合相关性、时效性、多样性和历史推荐，最多选择 10 篇论文；合格论文少于 2 篇时不发布。
 6. **生成与校验**：先生成暂存周报，再检查结构、元数据、来源、论文身份、链接和分数；通过后才发布到 `reports/YYYY-MM-DD.md`。
 
 AI 服务不可用时，已抓取的数据和分析队列仍会保存。系统可以使用已有合格评估继续筛选；合格论文不足时不发布周报。联网身份查询临时失败、出版商反爬等情况可能记录为警告，具体规则见[校验策略](docs/validation_policy.md)。
@@ -81,14 +81,14 @@ uv run research-agent run --dry-run --skip-llm
 
 ## 部署到 GitHub Actions
 
-完整步骤见[部署文档](docs/setup.md)。当前默认会复制完整摘要，并将运行状态写入同一仓库的 `research-data` 分支，建议先在私有仓库运行。准备公开时，先阅读[风险审查](docs/public-release-review.zh-CN.md)。
+完整步骤见[部署文档](docs/setup.md)。当前默认会复制完整摘要，并将运行状态写入同一仓库的 `research-data` 分支，建议先在私有仓库运行。准备公开时，先阅读下文的“存储、用量与公开边界”。
 
 1. 将项目推送到自己的 GitHub 仓库。
 2. 在已登录 Claude Code、具备适用订阅的本地机器上运行 `claude setup-token`。
 3. 将 token 保存为仓库 Secret `CLAUDE_CODE_OAUTH_TOKEN`。可运行 `scripts/set_claude_token.sh`，按隐藏输入提示粘贴 token；脚本会更新 Secret 并触发认证检查。
 4. 设置仓库 Variable `RESEARCH_AGENT_CONTACT_EMAIL`，按需设置 Secret `OPENALEX_API_KEY` 和 `NCBI_API_KEY`。
 5. 在 Settings → Actions 中允许所需 Actions，并确保写入任务有权推送周报和状态分支。配置分支保护时，需要同时安排自动发布的写入权限。
-6. 在 Actions → **Daily research digest** 手动运行，首次选择 `dry_run: true`，检查抓取、分析和校验结果，再开启正常发布。
+6. 在 Actions → **Research digest (daily collection, weekly digest)** 手动运行，首次选择 `dry_run: true`，检查抓取、分析和校验结果，再开启正常发布。
 
 也可以用 GitHub CLI 设置变量和 Secret：
 
@@ -126,11 +126,11 @@ gh secret set DEEPSEEK_API_KEY
 
 | 文件 | 配置内容 |
 |---|---|
-| `research_profile.yaml` | 核心/探索主题、重要性、关键词、MeSH 和排除项 |
+| `research_profile.yaml` | 核心/探索主题、重要性、关键词、MeSH 和排除项；核心主题需研究契合度 ≥ 55，探索主题（未用于建模的通用 AI）需 ≥ 60 且每期最多 2 篇 |
 | `search_queries.yaml` | 各数据源查询词组 |
 | `journals.yaml` | 期刊名称、ISSN 和启用状态 |
 | `scoring.yaml` | 评分维度、权重、规则版本和缺失数据策略 |
-| `ranking.yaml` | 推荐数量、时效窗口、相关性和多样性约束 |
+| `ranking.yaml` | 推荐数量（最多 10 篇、至少 2 篇才发布）、30 天时效窗口、相关性、多样性和期刊影响力下限（OpenAlex 两年平均被引 ≥ 2.0，重点期刊和预印本除外） |
 | `trends.yaml` | 趋势标签、时间窗口和每周重评规则 |
 | `llm.yaml` | 分析服务、模型、批次大小和重试策略 |
 | `sources.yaml` | 数据源地址、分页、限速和网络重试 |
@@ -138,7 +138,7 @@ gh secret set DEEPSEEK_API_KEY
 | `validation.yaml` | 联网身份核验、链接检查和修复轮数 |
 | `runtime.yaml` | 时区、存储位置、保留期限和 Git 分支 |
 
-默认评分权重为：研究契合度 30%、方法创新 25%、趋势相关性 15%、时效性 15%、证据与方法严谨性 10%、跨学科可迁移性 5%。启用维度的权重总和必须为 1。详见[评分方法](docs/scoring_methodology.md)和[趋势方法](docs/trend_methodology.md)。
+默认评分权重为：研究契合度 25%、方法创新 20%、趋势相关性 15%、期刊影响力 15%、时效性 10%、证据与方法严谨性 10%、跨学科可迁移性 5%。启用维度的权重总和必须为 1。详见[评分方法](docs/scoring_methodology.md)和[趋势方法](docs/trend_methodology.md)。
 
 ## 常用命令
 

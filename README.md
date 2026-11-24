@@ -4,14 +4,24 @@
 
 An unattended literature monitor for a computational public-health researcher. It runs every day at
 **06:00 Asia/Shanghai** to collect and assess new papers (steps 1–4), and publishes **one digest per
-week** (steps 5–6, on Mondays by default; `reporting.digest_weekday`). Together, it:
+week** (steps 5–6, on Mondays by default; `reporting.digest_weekday`).
+
+The research profile centres on **microsimulation and other simulation models** and on
+**AI-empowered modelling methods** (machine learning, RL or LLMs used to build, calibrate, emulate or
+optimize those models), with biostatistics, calibration, health economics, policy optimization and
+cancer / tobacco / hepatitis C applications as supporting core topics. Every recommendation must be
+**within public-health scope**: papers whose application is not human health (e.g. materials science
+or logistics) are excluded however well their method matches.
+
+Together, it:
 
 1. retrieves new and newly indexed papers from **PubMed, Europe PMC, OpenAlex, medRxiv** (topic
    queries) and **Crossref** (high-priority journals by ISSN), resuming from durable per-query
    watermarks;
 2. normalizes and deduplicates them on DOI/PMID/PMCID/preprint identifiers, with source provenance
    for every field;
-3. prescreens cheaply, then sends a bounded shortlist to **Claude via `anthropics/claude-code-action`
+3. prescreens cheaply, drops papers below the journal-impact floor or outside public-health scope,
+   then sends a bounded shortlist to **Claude via `anthropics/claude-code-action`
    (Claude Code subscription OAuth, no API key)** for structured, evidence-grounded assessment;
 4. maintains a versioned trend-tag database (180-day baseline, daily updates, weekly reassessment);
 5. computes weighted scores **in Python**, selects up to 10 papers from everything assessed since the
@@ -81,7 +91,7 @@ gh secret set NCBI_API_KEY                          # optional
 ```
 
 Never create an `ANTHROPIC_API_KEY` secret — the workflow refuses to run if it exists, so
-pay-as-you-go billing cannot be triggered. Then run *Actions → Daily research digest → Run workflow*
+pay-as-you-go billing cannot be triggered. Then run *Actions → Research digest (daily collection, weekly digest) → Run workflow*
 with `dry_run: true` once; the schedule takes over afterwards.
 
 Manual inputs: report date, mode (daily / backfill / validation-only), backfill range, dry run,
@@ -93,12 +103,19 @@ Everything is YAML under `config/` (see [docs/configuration.md](docs/configurati
 
 - **Research topics** — `config/research_profile.yaml`: add a topic with `id`, `name`, `kind`
   (`core`/`exploratory`), `importance`, `description`, `keywords`, optional `mesh_terms`, `exclude`.
+  Core topics need research alignment ≥ 55; exploratory topics (generic AI not applied to modelling)
+  need ≥ 60 and are capped at 2 per digest.
 - **Search queries** — `config/search_queries.yaml`: seed-phrase groups; provider syntax is generated.
 - **Journals** — `config/journals.yaml`: add `{id, name, issns: [print, electronic], enabled: true}`;
   verify ISSNs at `https://api.crossref.org/journals/<issn>` and `https://api.openalex.org/sources/issn:<issn>`.
 - **Scoring** — `config/scoring.yaml`: weights (must sum to 1), rubric versions, new dimensions
-  ([docs/scoring_methodology.md](docs/scoring_methodology.md#adding-a-dimension)).
-- **Trend tags** — `config/trends.yaml` or `research-agent tags add|rename|merge|archive|reactivate|pin|override|accept`
+  ([docs/scoring_methodology.md](docs/scoring_methodology.md#adding-a-dimension)). Defaults: research
+  alignment 25%, methodological innovation 20%, trend relevance 15%, journal impact 15%, freshness 10%,
+  rigor 10%, cross-disciplinary transferability 5%.
+- **Ranking** — `config/ranking.yaml`: up to 10 papers per digest, at least 2 to publish, 30-day
+  publication horizon, journal-impact floor (OpenAlex 2-year mean citedness ≥ 2.0; listed journals and
+  preprints exempt).
+- **Trend tags** — `config/trends.yaml` or `research-agent tags …` (see Commands)
   ([docs/trend_methodology.md](docs/trend_methodology.md)).
 - **Claude limits** — `config/llm.yaml`: model alias, turns, batch size, papers per run, retry policy.
 
@@ -109,7 +126,7 @@ Everything is YAML under `config/` (see [docs/configuration.md](docs/configurati
 | `init`, `doctor` | create/migrate storage, validate config; check secrets presence (never values), DB, connectivity |
 | `research-landscape --lookback-days 180` | initial baseline + `reports/landscape/<date>.md` |
 | `fetch --date D` | checkpointed retrieval and normalization |
-| `score --date D [--provider manifest|import|fixture]` | lease jobs into a Claude manifest / import outputs |
+| `score --date D [--provider manifest|import|fixture|deepseek]` | lease jobs into a Claude manifest / import outputs / DeepSeek |
 | `trends update [--weekly]` | trend snapshot |
 | `digest generate|validate --date D [--offline] [--publish]` | render to staging / independent validation |
 | `run --date D [--dry-run] [--skip-llm] [--provider fixture]` | complete local pipeline |
@@ -118,7 +135,8 @@ Everything is YAML under `config/` (see [docs/configuration.md](docs/configurati
 | `history [--paper ID]` | recommendation history and per-paper audit trail |
 | `feedback add|import|suggest`, `evaluate`, `replay --date D` | quality evaluation (see below) |
 | `state restore|persist` | fetch/push the data-branch snapshot |
-| `ci ingest|prepare|publish|validate|backfill|classify|claude-args` | GitHub Actions stages |
+| `tags list|add|rename|merge|archive|reactivate|watch|pin|unpin|override|proposals|accept|reject` | manage trend tags |
+| `ci ingest|prepare|publish|validate|backfill|classify|claude-args|provider|analyze` | GitHub Actions stages |
 
 Exit codes: 0 ok · 1 blocked/failed · 2 config/input error · 3 analysis deferred (Claude outage) ·
 4 not enough eligible papers · 5 stale data branch. See [docs/operations.md](docs/operations.md).
